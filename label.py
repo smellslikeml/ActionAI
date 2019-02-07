@@ -3,6 +3,7 @@ import argparse
 import logging
 import time
 import glob
+import os
 
 import numpy as np
 import tensorflow as tf
@@ -43,7 +44,7 @@ if __name__ == '__main__':
         writer = csv.writer(fl)
         for ydir in dirs:
             pose_dir = args.folder + ydir + '/'
-            files_grabbed = glob.glob(os.path.join(dd, '*'))
+            files_grabbed = glob.glob(os.path.join(pose_dir, '*'))
             for i, fl in enumerate(files_grabbed):
                 output_data, elapsed = run_inference(fl)
                 logger.info('inference image #%d: %s in %.4f seconds.' % (i, fl, elapsed))

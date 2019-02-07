@@ -6,10 +6,9 @@ YogAI is a responsive virtual yoga instructor using pose estimation to guide and
 
 You'll need have the following installed:
 - python3
-- tensorflow 1.11 -  pip wheel for 3.5 included thanks to [PINTO0309](https://github.com/PINTO0309/Tensorflow-bin)
+- tensorflow 1.11 -  pip wheel for 3.5 w/tflite working thanks to [PINTO0309](https://github.com/PINTO0309/Tensorflow-bin)
 - opencv3
 - sci-kit learn
-- xgboost
 
 ### Hardware
 - raspberry pi 3+

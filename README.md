@@ -21,7 +21,7 @@ You'll need have the following installed:
 ```
 $ git clone https://www.github.com/smellslikeml/YogAI
 $ cd YogAI
-$ pip3 install requirements.txt
+$ ./install.sh 
 ```
 
 ## Model

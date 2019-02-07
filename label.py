@@ -10,12 +10,22 @@ import tensorflow as tf
 import cv2
 import csv
 
-#Loading model
+# Loading model
+print('Loading model...')
 interpreter = tf.contrib.lite.Interpreter(model_path="./models/model.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
+
+# Logging stuff
+logger = logging.getLogger('TfPoseEstimator')
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 
 def load_image(path):
@@ -45,16 +55,20 @@ if __name__ == '__main__':
         for ydir in dirs:
             pose_dir = args.folder + ydir + '/'
             files_grabbed = glob.glob(os.path.join(pose_dir, '*'))
-            for i, fl in enumerate(files_grabbed):
-                output_data, elapsed = run_inference(fl)
-                logger.info('inference image #%d: %s in %.4f seconds.' % (i, fl, elapsed))
+            for i, file in enumerate(files_grabbed):
+                try:
+                    img = load_image(file)
+                    output_data, elapsed = run_inference(img)
+                    logger.info('inference image #%d: %s in %.4f seconds.' % (i, file, elapsed))
 
-                feature_vec = np.zeros(28)
-                for kp in range(14):
-                    blf = output_data[:,:,:,kp]
-                    max_idx = np.argmax(blf)
-                    coords = divmod(max_idx, 96)
-                    feature_vec[2*kp:2*kp+2] = coords
-                row = feature_vec.tolist()
-                row.append(ydir)
-                writer.writerow(row)
+                    feature_vec = np.zeros(28)
+                    for kp in range(14):
+                        blf = output_data[:,:,:,kp]
+                        max_idx = np.argmax(blf)
+                        coords = divmod(max_idx, 96)
+                        feature_vec[2*kp:2*kp+2] = coords
+                    row = feature_vec.tolist()
+                    row.append(ydir)
+                    writer.writerow(row)
+                except (ValueError, cv2.error) as e:
+                    print(file)

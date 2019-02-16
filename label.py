@@ -46,15 +46,15 @@ def run_inference(image):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='YogAI label pose samples for classifier')
-    parser.add_argument('--folder', type=str, default='./poses/')
+    parser.add_argument('--folder', type=str, default='./data/yoga/')
     args = parser.parse_args()
 
     dirs = os.listdir(args.folder)
-    with open("./poses/poses.csv", "w") as fl:
+    with open(args.folder + "poses.csv" , "w") as fl:
         writer = csv.writer(fl)
         for ydir in dirs:
             pose_dir = args.folder + ydir + '/'
-            files_grabbed = glob.glob(os.path.join(pose_dir, '*'))
+            files_grabbed = glob.glob(os.path.join(pose_dir, '*[!.txt]'))
             for i, file in enumerate(files_grabbed):
                 try:
                     img = load_image(file)

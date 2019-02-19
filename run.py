@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+import time
+import argparse
+import logging
 import numpy as np
 import tensorflow as tf
 import time

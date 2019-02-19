@@ -36,7 +36,6 @@ def ffwd_n_avg(q):
     for idx, val in enumerate(q[-1]): 
         if not val: 
             q[-1][idx] = q[-2][idx] 
-    #q[2] = np.average(q, weights=[0.2, 0.8], axis=0)
     return q
 
 count_dict = {'squat': 0, 'deadlift': 0, 'stand': 0}
@@ -60,10 +59,8 @@ while True:
 
     if len(q) == N:
         ff = np.expand_dims(np.concatenate(list(ffwd_n_avg(q)), axis=0).reshape(28, N), axis=0)
-        #ff = np.concatenate(list(q)).reshape(1, -1)
         move_pred = loaded_model.predict(ff)
         move_pred = np.argmax(move_pred[0])
-        #move_pred = 'squats' if move_pred else 'deadlift'
         count_dict[y_dict[move_pred]] += 1
 
     im = np.sum(output_data, axis=3).reshape((96, 96))[:,::-1] * 2

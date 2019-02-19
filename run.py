@@ -34,10 +34,9 @@ def run_inference(image):
 cam = cv2.VideoCapture(0)
 M = np.float32([[1, 0, 0],[0, 1, -15]])
 
-#Load pickled model
-loaded_model = pickle.load(open(args.pose_model, 'rb'))
 
 if __name__ == '__main__':
+    #TODO: implement the --bootstrap and --flow options
     parser = argparse.ArgumentParser(description='YogAI run basic inference without webcam')
     parser.add_argument('--pose_model', type=str, default='./models/yoga_poses.sav', help='a previously trained pose classifier')
     parser.add_argument('--bootstrap', type=bool, default=False, help='set as True to label new pose samples (default=False) ')
@@ -45,7 +44,9 @@ if __name__ == '__main__':
     parser.add_argument('--flow', type=str, default='demo', help='pose routine: choose from demo, random, or create your own as a list of poses ie. ["pose1", "pose2", "pose3"]')
     args = parser.parse_args()
     
-    #TODO: implement the --bootstrap and --flow options
+
+    #Load pickled model
+    loaded_model = pickle.load(open(args.pose_model, 'rb'))
 
     while True:
         ret_val, image = cam.read()
@@ -72,8 +73,7 @@ if __name__ == '__main__':
 			(220, 223, 154), 15) 
 
 	    cv2.putText(im,
-		    "YogAI", #pose_pred),
-		    #"Elapsed: %f" % np.round(elapsed, 1), #pose_pred),
+		    "YogAI", 
 			(100, 100),  cv2.FONT_HERSHEY_SIMPLEX, 3.0,
 			(255, 255, 255), 15) 
 

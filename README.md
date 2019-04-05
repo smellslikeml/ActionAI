@@ -54,7 +54,7 @@ The [Hackster post](https://www.hackster.io/yogai/yogai-smart-personal-trainer-f
 ## Run
 After you've trained the classifier on your samples, you should have a pickled model in the ``` ./models ``` directory. Simply run
 ```
-python3 run.py
+python3 app.py
 ```
 to get your YogAI instructor running!
 

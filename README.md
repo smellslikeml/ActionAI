@@ -2,7 +2,7 @@
 
 YogAI is a responsive virtual yoga instructor using pose estimation to guide and correct a yogi that runs on a raspberry pi smart mirror. 
 
-### Read More:
+#### Read More:
 - [MagPi Article](https://www.raspberrypi.org/blog/yoga-training-with-yogai-and-a-raspberry-pi-smart-mirror-the-magpi-issue-80/)
 - [Hackster writeup](https://www.hackster.io/yogai/yogai-smart-personal-trainer-f53744)
 

@@ -1,34 +1,34 @@
-#!/usr/bin/env python3
-import pickle
-import numpy as np
 import pandas as pd
-import xgboost as xgb
-from xgboost import XGBClassifier
-from multiprocessing import cpu_count
+from sklearn.pipeline import Pipeline
 
+from transformer import PoseExtractor
 
-dataset = pd.read_csv('./data/yoga/augmented_poses.csv',  index_col=0)
-dataset.head()
+def train_model(csv_path, pipeline):
+    df = pd.read_csv(csv_path)
+    X = df['image'].values
+    y = df['label']
+    pipeline = pipeline.fit(X, y)
+    return pipeline.get_params()['steps'][1][1]  
 
-# Spliting the points and the labels
-X = dataset.iloc[:, :-1].values  
-y = dataset.iloc[:, 28].values
+if __name__ == '__main__':
+    import pickle
+    import argparse
+    import importlib
 
-# And split the data into appropriate data sets
+    parser = argparse.ArgumentParser(description='Train pose classifier')
+    parser.add_argument('--config', type=str, default='conf',
+                        help="name of config .py file inside config/ directory, default: 'conf'")
+    args = parser.parse_args()
+    config = importlib.import_module('config.' + args.config)
 
-class_names = list(set(y))
-num_class = len(class_names)
-cores = cpu_count()
+    # For example, let's apply Logistic Regression
+    from sklearn.linear_model import LogisticRegression
 
-clf = XGBClassifier(max_depth=6, 
-                    learning_rate=0.01, 
-                    n_estimators=300, 
-                    objective='multi:softmax', 
-                    n_jobs=cores, 
-                    num_class=num_class)
+    pipeline = Pipeline([
+    ('pose_extractor', PoseExtractor()),
+    ('classifier', LogisticRegression())])
 
-#preds = clf.fit(X_train, y_train).predict(X_test)
-clf.fit(X, y)
-filename = './models/yoga_poses.sav'
-pickle.dump(clf, open(filename, 'wb'))
+    model = train_model(config.csv_path, pipeline)
 
+    # Dump the model to file
+    pickle.dump(model, open(config.classifier_model, 'wb'), protocol=2)

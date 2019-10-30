@@ -47,9 +47,3 @@ The pickled model will be saved in the ```models/``` directory
 ## Run
 We've provided a sample inference script, ```inference.py```, that will read input from a webcam, mp4, or rstp stream, run inference on each frame, and print inference results. 
 
-## References
-[1] Tensorflow wheels w/ tflite : https://github.com/PINTO0309/Tensorflow-bin
-
-[2] Pose estimation for mobile : https://github.com/edvardHua/PoseEstimationForMobile
-
-[3] Pose estimation tensorflow implementation : https://github.com/ildoonet/tf-pose-estimation

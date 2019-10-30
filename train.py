@@ -21,12 +21,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     config = importlib.import_module('config.' + args.config)
 
-    # For example, let's apply Logistic Regression
-    from sklearn.linear_model import LogisticRegression
-
     pipeline = Pipeline([
     ('pose_extractor', PoseExtractor()),
-    ('classifier', LogisticRegression())])
+    ('classifier', config.classifier())])
 
     model = train_model(config.csv_path, pipeline)
 

@@ -16,7 +16,7 @@ if __name__ == '__main__':
     model = pickle.load(open(config.classifier_model, 'rb'))
 
     extractor = PoseExtractor()
-    cap = cv2.VideoCapture(config.camera)
+    cap = cv2.VideoCapture(config.stream)
     while True:
         ret, image = cap.read()
         sample = extractor.transform([image])

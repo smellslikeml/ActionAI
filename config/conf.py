@@ -1,4 +1,4 @@
-images_dir = '/home/funk/Pictures/test_pose'
+images_dir = 'path/to/images/dir'
 csv_path = 'data/data.csv'
 pose_model = 'models/pose.tflite'
 body_dict = {0:'head', 1: 'neck', 2: 'lshoulder', 3:'lelbow',

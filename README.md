@@ -1,4 +1,4 @@
-# ActionAI
+# ActionAI 🤸
 [![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)](https://www.python.org/downloads/release/python-370/)
 ![stars](https://img.shields.io/github/stars/smellslikeml/ActionAI)
 ![forks](https://img.shields.io/github/forks/smellslikeml/ActionAI)
@@ -11,16 +11,16 @@ ActionAI is a python library for training machine learning models to classify hu
 These instructions will show how to prepare your image data, train a model, and deploy the model to classify human action from image samples. See deployment for notes on how to deploy the project on a live stream.
 
 ### Prerequisites
-- tensorflow 2.0
-- scikit-learn
-- opencv
-- pandas
-- pillow
+- [tensorflow 2.0](https://www.tensorflow.org)
+- [scikit-learn](https://scikit-learn.org/stable/)
+- [opencv](https://opencv-python-tutroals.readthedocs.io/en/latest/)
+- [pandas](https://pandas.pydata.org)
+- [pillow](https://pillow.readthedocs.io/en/stable/)
 
 ### Installing
 We recommend using a virtual environment to avoid any conflicts with your systems global configuration. You can install the required dependencies via pip:
 
-```
+```bash
 # Assuming your python path points to python 3.x 
 pip install -r requirements.txt
 ```
@@ -32,7 +32,7 @@ The ```conf.py``` file included imports a LinearRegression model as our classifi
 ### Example
 After proprocessing your image data using the ```preprocess.py``` script, you can train a model by simply creating a scikit-learn pipeline:
 
-```
+```python
 pipeline = Pipeline([
     ('pose_extractor', PoseExtractor()),
     ('classifier', config.classifier())])
@@ -44,7 +44,7 @@ model = pipeline.fit(X,y)
 ## Data processing 
 Arrange your image data as a directory of subdirectories, each subdirectory named as a label for the images contained in it. Your directory structure should look like this:
 
-```
+```bash
 ├── images_dir
 │   ├── class_1
 │   │   ├── sample1.png
@@ -60,7 +60,7 @@ Arrange your image data as a directory of subdirectories, each subdirectory name
 Samples should be standard image files recognized by the pillow library.
 
 To generate a dataset from your images, run the ```preprocess.py``` script.
-```
+```bash
 python preprocess.py
 ```
 This will stage the labeled image dataset in a csv file written to the ```data/``` directory.
@@ -69,7 +69,7 @@ This will stage the labeled image dataset in a csv file written to the ```data/`
 After reading the csv file into a dataframe, a custom scikit-learn transformer estimates body keypoints to produce a low-dimensional feature vector for each sample image. This representation is fed into a scikit-learn classifier set in the config file. 
 
 Run the train.py script to train and save a classifier
-```
+```bash
 python train.py
 ```
 

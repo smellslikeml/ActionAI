@@ -30,15 +30,14 @@ All preprocessing, training, and deployment configuration variables are stored i
 The ```conf.py``` file included imports a LinearRegression model as our classifier by default.
 
 ### Example
-After proprocessing your image data using the ```preprocess.py``` script, you can train a model by simply creating a scikit-learn pipeline:
+After proprocessing your image data using the ```preprocess.py``` script, you can create a model by calling the ```actionModel()```function, which creates a scikit-learn pipeline. Then, call the ```trainModel()``` function with your data to train:
 
 ```python
-pipeline = Pipeline([
-    ('pose_extractor', PoseExtractor()),
-    ('classifier', config.classifier())])
+# Stage your model
+pipeline = actionModel(config.classifier())
 
-# X is an array of image paths, y is an array of labels
-model = pipeline.fit(X,y)
+# Train your model
+model = trainModel(config.csv_path, pipeline)
 ```
 
 ## Data processing 
@@ -88,6 +87,8 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## References
 
+* [Hackster post](https://www.hackster.io/yogai/yogai-smart-personal-trainer-f53744)
+* [YogAI article](https://www.raspberrypi.org/blog/yoga-training-with-yogai-and-a-raspberry-pi-smart-mirror-the-magpi-issue-80/)
 * [Convolutional Pose Machine](https://arxiv.org/pdf/1602.00134.pdf)
 * [Pose estimation for mobile](https://github.com/edvardHua/PoseEstimationForMobile)
 * [Pose estimation tensorflow implementation](https://github.com/ildoonet/tf-pose-estimation)

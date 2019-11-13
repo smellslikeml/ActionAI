@@ -1,0 +1,5 @@
+tensorflow==2.0.0
+scikit-learn
+opencv-contrib-python
+pandas
+pillow

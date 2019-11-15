@@ -18,7 +18,7 @@ These instructions will show how to prepare your image data, train a model, and 
 - [pillow](https://pillow.readthedocs.io/en/stable/)
 
 ### Installing
-We recommend using a virtual environment to avoid any conflicts with your systems global configuration. You can install the required dependencies via pip:
+We recommend using a virtual environment to avoid any conflicts with your system's global configuration. You can install the required dependencies via pip:
 
 ```bash
 # Assuming your python path points to python 3.x 

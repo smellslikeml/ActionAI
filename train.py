@@ -3,7 +3,7 @@ from sklearn.pipeline import Pipeline
 
 from transformer import PoseExtractor
 
-def actionModel(classifier)
+def actionModel(classifier):
     pipeline = Pipeline([
                ('pose_extractor', PoseExtractor()),
                ('classifier', classifier)])

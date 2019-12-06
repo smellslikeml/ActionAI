@@ -1,4 +1,5 @@
 tensorflow==2.0.0
+scipy
 scikit-learn
 opencv-contrib-python
 pandas

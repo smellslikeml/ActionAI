@@ -140,8 +140,7 @@ class GetKeypoints(object):
 
 if __name__ == '__main__':
     extractor = PoseExtractor()
-    #image = cv2.imread('/your/sample/image.jpg')
-    image = cv2.imread('person_portrait.jpg')
+    image = cv2.imread('/your/sample/image.jpg')
     sample = extractor.transform([image])
     print(type(sample))
     print(sample.shape)

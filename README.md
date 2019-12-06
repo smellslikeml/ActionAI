@@ -22,6 +22,9 @@ These instructions will show how to prepare your image data, train a model, and 
 ### Installing
 We recommend using a virtual environment to avoid any conflicts with your system's global configuration. You can install the required dependencies via pip:
 
+### Jetson Nano Installation
+We use the [trt_pose repo](https://github.com/NVIDIA-AI-IOT/trt_pose) to extract pose estimations. Please look to this repo to install the required dependencies. 
+
 ```bash
 # Assuming your python path points to python 3.x 
 pip install -r requirements.txt

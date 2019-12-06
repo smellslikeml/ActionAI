@@ -1,3 +1,19 @@
+"""
+Training - run this script after preprocessing your image data!
+
+If you are on a Jetson Nano, import TRTPoseExtractor from transformer and modify the actionModel function to use this instead. 
+ie.
+
+from transformer import PoseExtractor
+
+def actionModel(classifier):
+    pipeline = Pipeline([
+               ('pose_extractor', TRTPoseExtractor()),
+               ...
+               ])
+    return pipeline
+"""
+
 import pandas as pd
 from sklearn.pipeline import Pipeline
 

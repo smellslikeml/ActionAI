@@ -72,7 +72,7 @@ This will stage the labeled image dataset in a csv file written to the ```data/`
 ## Training
 After reading the csv file into a dataframe, a custom scikit-learn transformer estimates body keypoints to produce a low-dimensional feature vector for each sample image. This representation is fed into a scikit-learn classifier set in the config file. 
 
-![YogAI](yogai_squat_or_not.gif)
+![YogAI example](https://github.com/smellslikeml/ActionAI/blob/master/assets/yogai_squat_or_not.gif)
 
 
 Run the train.py script to train and save a classifier

@@ -19,8 +19,7 @@ cores = cpu_count()
 
 class_names = ['squat', 'deadlift', 'stand']
 num_class = len(class_names)
-y_dict = {class_name:idx for idx, class_name in enumerate(class_names)}
-lbl_dict = {idx:class_name for idx, class_name in enumerate(class_names)}
+lbl_dict = {class_name:idx for idx, class_name in enumerate(class_names)}
 
 
 def load_data(fl):
@@ -29,8 +28,8 @@ def load_data(fl):
     X = dataset.values  
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2) 
 
-    y_train = keras.utils.to_categorical(list(map(lbl_dict, y_train)), num_class)
-    y_test = keras.utils.to_categorical(list(map(lbl_dict, y_test)), num_class)
+    y_train = keras.utils.to_categorical(list(map(lbl_dict.get, y_train)), num_class)
+    y_test = keras.utils.to_categorical(list(map(lbl_dict.get, y_test)), num_class)
 
     X_test = X_test.reshape(X_test.shape[0], pose_vec_dim, window)
     X_train = X_train.reshape(X_train.shape[0], pose_vec_dim, window)

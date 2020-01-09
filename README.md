@@ -7,7 +7,9 @@
 
 ActionAI is a python library for training machine learning models to classify human action. It is a generalization of our [yoga smart personal trainer](https://www.hackster.io/yogai/yogai-smart-personal-trainer-f53744), which is included in this repo as an example.
 
-![YogAI](https://github.com/smellslikeml/ActionAI/blob/master/assets/actionai_example.gif)
+<p align="center">
+  <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/actionai_trackable.gif">
+</p>
 
 ## Getting Started 
 These instructions will show how to prepare your image data, train a model, and deploy the model to classify human action from image samples. See deployment for notes on how to deploy the project on a live stream.
@@ -72,7 +74,9 @@ This will stage the labeled image dataset in a csv file written to the ```data/`
 ## Training
 After reading the csv file into a dataframe, a custom scikit-learn transformer estimates body keypoints to produce a low-dimensional feature vector for each sample image. This representation is fed into a scikit-learn classifier set in the config file. 
 
-![YogAI example](https://github.com/smellslikeml/ActionAI/blob/master/assets/yogai_squat_or_not.gif)
+<p align="center">
+  <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/actionai_example.gif">
+</p>
 
 
 Run the train.py script to train and save a classifier

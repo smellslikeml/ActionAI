@@ -26,10 +26,11 @@ We recommend using a virtual environment to avoid any conflicts with your system
 
 ### Jetson Nano Installation
 We use the [trt_pose repo](https://github.com/NVIDIA-AI-IOT/trt_pose) to extract pose estimations. Please look to this repo to install the required dependencies. 
+You will also need to download these zipped [model assets](https://drive.google.com/open?id=1SkPn4vzZofCtwReodtAsnwYgVkONR5-G) and unzip the package into the ```models/``` directory. 
 
 ```bash
 # Assuming your python path points to python 3.x 
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 All preprocessing, training, and deployment configuration variables are stored in the ```conf.py``` file in the ```config/``` directory. You can create your own conf.py files and store them in this directory for fast experimentation.
@@ -67,7 +68,7 @@ Samples should be standard image files recognized by the pillow library.
 
 To generate a dataset from your images, run the ```preprocess.py``` script.
 ```bash
-python preprocess.py
+$ python preprocess.py
 ```
 This will stage the labeled image dataset in a csv file written to the ```data/``` directory.
 
@@ -81,13 +82,23 @@ After reading the csv file into a dataframe, a custom scikit-learn transformer e
 
 Run the train.py script to train and save a classifier
 ```bash
-python train.py
+$ python train.py
 ```
 
 The pickled model will be saved in the ```models/``` directory
 
 ## Deployment
 We've provided a sample inference script, ```inference.py```, that will read input from a webcam, mp4, or rstp stream, run inference on each frame, and print inference results. 
+
+If you are running on a Jetson Nano, the ```iva.py``` script will perform multi-person tracking and activity recognition like the demo gif above *Getting Started*. Simply run:
+```bash
+$ python iva.py 0
+
+# or if you have a video file
+
+$ python iva.py /path/to/file.mp4
+```
+If specified, this script will write a labeled video as ```out.mp4```.
 
 ## Contributing
 

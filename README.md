@@ -91,7 +91,9 @@ The pickled model will be saved in the ```models/``` directory
 <p align="center">
   <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/yogai_squat_or_not.gif">
 </p>
+
 To train a more complex model to classify a sequence of poses culminating in an action (ie. squat or spin), use the ```train_sequential.py``` script. This script will train an LSTM model to classify movements.
+
 ```bash
 $ python train_sequential.py
 ```

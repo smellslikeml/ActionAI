@@ -113,9 +113,14 @@ $ python iva.py /path/to/file.mp4
 If specified, this script will write a labeled video as ```out.mp4```.
 
 ### Teachable Machine
+<p align="center">
+  <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/teachable.gif">
+</p>
+
 We've also included a script under the experimental folder,```teachable_machine.py```,that supports labelling samples via a PS3 Controller on a Jetson Nano and training in real-time from a webcam stream. This will require these extra dependencies:
 * [Pygame](https://www.pygame.org/docs/ref/joystick.html)
 * [PS3 Controller](https://docs.donkeycar.com/parts/controllers/#ps3-controller)
+
 To test it, run:
 ``` bash
 # Using a webcam

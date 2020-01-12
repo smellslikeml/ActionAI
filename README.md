@@ -73,7 +73,7 @@ $ python preprocess.py
 This will stage the labeled image dataset in a csv file written to the ```data/``` directory.
 
 ## Training
-After reading the csv file into a dataframe, a custom scikit-learn transformer estimates body keypoints to produce a low-dimensional feature vector for each sample image. This representation is fed into a scikit-learn classifier set in the config file. 
+After reading the csv file into a dataframe, a custom scikit-learn transformer estimates body keypoints to produce a low-dimensional feature vector for each sample image. This representation is fed into a scikit-learn classifier set in the config file. This approach works well for lightweight applications that require classifying a pose like the [YogAI](https://www.hackster.io/yogai/yogai-smart-personal-trainer-f53744) usecase:
 
 <p align="center">
   <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/actionai_example.gif">
@@ -86,6 +86,16 @@ $ python train.py
 ```
 
 The pickled model will be saved in the ```models/``` directory
+
+
+<p align="center">
+  <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/yogai_squat_or_not.gif">
+</p>
+To train a more complex model to classify a sequence of poses culminating in an action (ie. squat or spin), use the ```train_sequential.py``` script. This script will train an LSTM model to classify movements.
+```bash
+$ python train_sequential.py
+```
+
 
 ## Deployment
 We've provided a sample inference script, ```inference.py```, that will read input from a webcam, mp4, or rstp stream, run inference on each frame, and print inference results. 

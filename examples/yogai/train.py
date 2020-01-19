@@ -10,7 +10,7 @@ from multiprocessing import cpu_count
 dataset = pd.read_csv('./data/yoga/augmented_poses.csv',  index_col=0)
 dataset.head()
 
-# Spliting the points and the labels
+# Splitting the points and the labels
 X = dataset.iloc[:, :-1].values  
 y = dataset.iloc[:, 28].values
 

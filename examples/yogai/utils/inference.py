@@ -66,7 +66,7 @@ class motionClassifier(object):
         if self.pose_model == 'tree':
             return str(self.pose_model.predict(self.feature_vec))
         else:
-            pose_pred = pose_model.predict(self.feature_vec)
+            pose_pred = self.pose_model.predict(self.feature_vec)
             return self.pose_dict[np.argmax(pose_pred[0])]
 
 

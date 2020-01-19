@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import datetime
 import time
 import cv2
 import subprocess
+import numpy as np
 from utils.inference import motionClassifier
 
 class Flow():
@@ -29,7 +31,7 @@ class Flow():
         ret_val, self.image = self.cam.read()
         img = cv2.resize(self.image, (self.motion.inputDim, self.motion.inputDim), 3)
         img = np.expand_dims(img, axis=0).astype(np.float32)
-        self.motion.ft_ext(image)
+        self.motion.ft_ext(self.image)
         return self.motion.pose()
 
     def sayPhrase(self, phrase, tm=0.7):

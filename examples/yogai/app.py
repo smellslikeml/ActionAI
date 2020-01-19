@@ -20,7 +20,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     current_pose = None
     f = ['tree_pose', 'warrior_1', 'crescent_lunge', 'warrior_2', 'triangle', 'half_moon', 'plank', 'chaturanga_dandasana', 'cobra']
-    elif msg.topic == 'hermes/intent/smayorquin:BeginClass':
+    if msg.topic == 'hermes/intent/smayorquin:BeginClass':
         #Sample flow
         flow = Flow(f)
         flow.run()

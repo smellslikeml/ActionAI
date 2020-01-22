@@ -91,3 +91,29 @@ def tracker_match(trackers, detections, iou_thrd = 0.3):
 
     return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
 
+
+class img_proc(object):
+    def __init__(self, offset=50):
+        self.offset = 50
+        self.thickness = 3
+        self.box_color = (195, 195, 89)
+        self.text_color = (151, 187, 106)
+        self.centroid_color = (223, 183, 190)
+
+
+    def annotate(self, tracker, image):
+        x1, y1, x2, y2 = tracker.bbox
+        image = cv2.rectangle(image, (x1 - self.offset, y1 - self.offset), 
+                                     (x2 + self.offset, y2 + self.offset), 
+                                     self.box_color, 2) 
+        try:
+            cv2.putText(image, tracker.id, (x1 - self.offset + 10, y1 + 40), \
+                               cv2.FONT_HERSHEY_SIMPLEX, 3, self.text_color, self.thickness) 
+            cv2.putText(image, tracker.activity, (x1 - self.offset + 10, y1 - self.offest - 10), \
+                               cv2.FONT_HERSHEY_SIMPLEX, 3, self.text_color, self.thickness) 
+        except:
+            pass
+        image = cv2.drawMarker(image, tracker.centroid, self.centroid_color, 0, 30, self.thickness) 
+        return image
+
+

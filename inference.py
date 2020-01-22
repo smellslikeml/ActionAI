@@ -17,12 +17,15 @@ if __name__ == '__main__':
 
     extractor = PoseExtractor()
     cap = cv2.VideoCapture(config.stream)
-    while True:
+    while(cap.isOpened()):
         ret, image = cap.read()
-        sample = extractor.transform([image])
-        prediction = model.predict(sample.reshape(1, -1))
-        print(prediction[0])
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if ret == True:
+            sample = extractor.transform([image])
+            prediction = model.predict(sample.reshape(1, -1))
+            print(prediction[0])
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
             break
 
     cap.release()

@@ -1,8 +1,21 @@
+import cv2
 import string
 import random
 import numpy as np
 from operator import itemgetter
 from sklearn.utils.linear_assignment_ import linear_assignment
+
+import config as cfg
+
+def source_capture(source):
+    source = int(source) if source.isdigit() else source
+    cap = cv2.VideoCapture(source)
+
+    fourcc_cap = cv2.VideoWriter_fourcc(*'MJPG')
+    cap.set(cv2.CAP_PROP_FOURCC, fourcc_cap)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, cfg.w)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cfg.h)
+    return cap
 
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
     '''
@@ -92,7 +105,7 @@ def tracker_match(trackers, detections, iou_thrd = 0.3):
     return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
 
 
-class img_proc(object):
+class img_obj(object):
     def __init__(self, offset=50):
         self.offset = 50
         self.thickness = 3
@@ -102,6 +115,14 @@ class img_proc(object):
 
 
     def annotate(self, tracker, image):
+        '''
+        Used to return image with
+        person instances designated 
+        by the bounding box and a 
+        marker at the centroid.
+        Annotated with tracker id
+        and activity label
+        '''
         x1, y1, x2, y2 = tracker.bbox
         image = cv2.rectangle(image, (x1 - self.offset, y1 - self.offset), 
                                      (x2 + self.offset, y2 + self.offset), 
@@ -115,5 +136,12 @@ class img_proc(object):
             pass
         image = cv2.drawMarker(image, tracker.centroid, self.centroid_color, 0, 30, self.thickness) 
         return image
+
+    def get_crop(self, bbox, image):
+        '''
+        Helper for sampling image crops
+        '''
+        return image[x1:x2, y1:y2, :]
+
 
 

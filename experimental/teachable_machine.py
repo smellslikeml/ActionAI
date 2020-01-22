@@ -4,8 +4,6 @@ import csv
 import time
 import numpy as np
 
-from pprint import pprint
-
 import poses
 import utils
 import person
@@ -30,19 +28,9 @@ if cfg.video:
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(name, fourcc, cfg.fps, (cfg.w, cfg.h))
 
-def source_capture(source):
-    source = int(source) if source.isdigit() else source
-    cap = cv2.VideoCapture(source)
-
-    fourcc_cap = cv2.VideoWriter_fourcc(*'MJPG')
-    cap.set(cv2.CAP_PROP_FOURCC, fourcc_cap)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, cfg.w)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cfg.h)
-    return cap
-
 trackers = []
-cap = source_capture(sys.argv[1])
-img = utils.img_proc()
+cap = utils.source_capture(sys.argv[1])
+img = utils.img_obj()
 
 while True:
 
@@ -51,6 +39,7 @@ while True:
     if ret:
 
         image, pose_list = poses.inference(frame)
+        print(pose_list)
         for body in pose_list:
             bbox = utils.get_bbox(list(body.values()))
             bboxes.append((bbox, body))
@@ -60,7 +49,8 @@ while True:
 
         for idx, jdx in matched:
             trackers[idx].set_bbox(bboxes[jdx][0])
-            trackers[idx].update_pose(bboxes[jdx][1])
+            trackers[idx].set_pose(bboxes[jdx][1])
+            trackers[idx].set_cubit(bboxes[jdx][1])
 
         for idx in unmatched_detections:
             try:
@@ -73,10 +63,11 @@ while True:
         for idx in unmatched_trackers:
             p = person.PersonTracker()
             p.set_bbox(bboxes[idx][0])
-            p.update_pose(bboxes[idx][1])
+            p.set_pose(bboxes[idx][1])
+            p.set_cubit(bboxes[idx][1])
             trackers.append(p)
 
-        pprint([(tracker.id, np.vstack(tracker.q)) for tracker in trackers])
+        print([(tracker.id, np.vstack(tracker.q)) for tracker in trackers])
 
         for tracker in trackers:
             activity = [cfg.activity_dict[x] for x in ps3.getButton()]
@@ -86,6 +77,7 @@ while True:
                 sample = np.array(list(tracker.q)[:cfg.window])
                 sample = sample.reshape(1, cfg.pose_vec_dim, cfg.window)
                 if activity:
+                    #activity_y = mdl.to_categorical(list(map(cfg.idx_dict.get, tracker.activity)), len(cfg.activity_dict))
                     activity_y = np.expand_dims(mdl.to_categorical(cfg.idx_dict[activity[0]], len(cfg.activity_dict)), axis=0)
                     secondary_model.fit(sample, activity_y, batch_size=1, epochs=1, verbose=1)
                     tracker.activity = activity

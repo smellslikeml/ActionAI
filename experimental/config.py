@@ -1,5 +1,3 @@
-#w = 1024
-#h = 768
 w = 2448
 h = 2048
 fps = 30
@@ -17,9 +15,7 @@ body_idx = dict([[v,k] for k,v in body_dict.items()])
 pose_vec_dim = 2 * len(body_dict)
 
 button_list = ['circle', 'cross', 'square', 'triangle']
-#activity_list = ['loiter', 'run', 'walk', 'wave']
 activity_list = ['curl', 'extension', 'press', 'raise']
-#activity_list = ['standing', 'throwing']
 
 activity_idx = {idx : activity for idx, activity in enumerate(sorted(activity_list))}
 activity_dict = {tup[0] : tup[1] for tup in zip(button_list, activity_list)}

@@ -5,7 +5,7 @@ window = 3
 input_size = (224, 224)
 log = True
 video = True
-display = False
+display = True 
 learning_rate = 1e-4
 
 body_dict = {0:'nose', 1: 'lEye', 2: 'rEye', 3:'lEar', 4:'rEar', 5:'lShoulder', 6:'rShoulder', 

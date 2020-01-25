@@ -5,7 +5,7 @@ window = 3
 input_size = (224, 224)
 log = True
 video = True
-display = True 
+display = False 
 learning_rate = 1e-4
 
 body_dict = {0:'nose', 1: 'lEye', 2: 'rEye', 3:'lEar', 4:'rEar', 5:'lShoulder', 6:'rShoulder', 
@@ -14,12 +14,21 @@ body_dict = {0:'nose', 1: 'lEye', 2: 'rEye', 3:'lEar', 4:'rEar', 5:'lShoulder', 
 body_idx = dict([[v,k] for k,v in body_dict.items()])
 pose_vec_dim = 2 * len(body_dict)
 
-button_list = ['circle', 'cross', 'square', 'triangle']
-activity_list = ['curl', 'extension', 'press', 'raise']
+activity_dict = {'left': '', 
+                 'right': '', 
+                 'up': '', 
+                 'down': '', 
+                 'd1L':  '', 
+                 'd1R': '', 
+                 'select': '', 
+                 'start': '', 
+                 'cross': 'extension', 
+                 'circle': 'curl', 
+                 'triangle': 'raise', 
+                 'square': 'press', 
+                 'jLbutton': '', 
+                 'jRbutton': ''}
 
-activity_idx = {idx : activity for idx, activity in enumerate(sorted(activity_list))}
-activity_dict = {tup[0] : tup[1] for tup in zip(button_list, activity_list)}
-idx_dict = {x:idx for idx,x in enumerate(sorted(activity_dict.values()))}
-
-
-button_states = {'left':0, 'right':0, 'up':0, 'down':0, 'd1L': 0, 'd1R':0, 'select':0, 'start':0, 'cross':0, 'circle':0, 'triangle':0, 'square':0, 'jLbutton':0, 'jRbutton':0}
+activity_list = sorted([x for x in activity_dict.values() if x])
+idx_dict = {x:idx for idx, x in enumerate(activity_list)}
+activity_idx = {idx : activity for idx, activity in enumerate(activity_list)}

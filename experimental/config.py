@@ -22,3 +22,4 @@ activity_dict = {tup[0] : tup[1] for tup in zip(button_list, activity_list)}
 idx_dict = {x:idx for idx,x in enumerate(sorted(activity_dict.values()))}
 
 
+button_states = {'left':0, 'right':0, 'up':0, 'down':0, 'd1L': 0, 'd1R':0, 'select':0, 'start':0, 'cross':0, 'circle':0, 'triangle':0, 'square':0, 'jLbutton':0, 'jRbutton':0}

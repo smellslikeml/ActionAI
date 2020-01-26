@@ -150,7 +150,7 @@ def update_trackers(trackers, bboxes):
 
     for idx, jdx in matched:
         trackers[idx].set_bbox(bboxes[jdx][0])
-        trackers[idx].update_pose(bboxes[jdx][1])
+        trackers[idx].set_pose(bboxes[jdx][1])
 
     for idx in unmatched_detections:
         try:
@@ -163,7 +163,7 @@ def update_trackers(trackers, bboxes):
     for idx in unmatched_trackers:
         p = person.PersonTracker()
         p.set_bbox(bboxes[idx][0])
-        p.update_pose(bboxes[idx][1])
+        p.set_pose(bboxes[idx][1])
         trackers.append(p)
     return trackers
 

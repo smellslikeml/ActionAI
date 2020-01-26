@@ -30,7 +30,8 @@ if cfg.video:
 
 trackers = []
 cap = utils.source_capture(sys.argv[1])
-img = utils.img_obj()
+img = utils.img_proc()
+
 
 while True:
 
@@ -44,28 +45,8 @@ while True:
             bbox = utils.get_bbox(list(body.values()))
             bboxes.append((bbox, body))
 
-        track_boxes = [tracker.bbox for tracker in trackers]
-        matched, unmatched_trackers, unmatched_detections = utils.tracker_match(track_boxes, [b[0] for b in bboxes])
 
-        for idx, jdx in matched:
-            trackers[idx].set_bbox(bboxes[jdx][0])
-            trackers[idx].set_pose(bboxes[jdx][1])
-            trackers[idx].set_cubit(bboxes[jdx][1])
-
-        for idx in unmatched_detections:
-            try:
-                trackers[idx].count += 1
-                if trackers[idx].count > trackers[idx].expiration:
-                    trackers.pop(idx)
-            except:
-                pass
-
-        for idx in unmatched_trackers:
-            p = person.PersonTracker()
-            p.set_bbox(bboxes[idx][0])
-            p.set_pose(bboxes[idx][1])
-            p.set_cubit(bboxes[idx][1])
-            trackers.append(p)
+        trackers = utils.update_trackers(trackers, bboxes)
 
         print([(tracker.id, np.vstack(tracker.q)) for tracker in trackers])
 
@@ -89,7 +70,6 @@ while True:
 
             if cfg.log:
                 newFileWriter.writerow([tracker.activity] + list(np.hstack(list(tracker.q)[:cfg.window])))
-                    
 
         if cfg.video:
             for tracker in trackers:

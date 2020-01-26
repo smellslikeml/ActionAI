@@ -5,17 +5,8 @@ import numpy as np
 from operator import itemgetter
 from sklearn.utils.linear_assignment_ import linear_assignment
 
+import person
 import config as cfg
-
-def source_capture(source):
-    source = int(source) if source.isdigit() else source
-    cap = cv2.VideoCapture(source)
-
-    fourcc_cap = cv2.VideoWriter_fourcc(*'MJPG')
-    cap.set(cv2.CAP_PROP_FOURCC, fourcc_cap)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, cfg.w)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cfg.h)
-    return cap
 
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
     '''
@@ -72,7 +63,6 @@ def tracker_match(trackers, detections, iou_thrd = 0.3):
     # Produces matches
     # Solve the maximizing the sum of IOU assignment problem using the
     # Hungarian algorithm (also known as Munkres algorithm)
-
     matched_idx = linear_assignment(-IOU_mat)
 
     unmatched_trackers, unmatched_detections = [], []
@@ -104,6 +94,15 @@ def tracker_match(trackers, detections, iou_thrd = 0.3):
 
     return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
 
+def source_capture(source):
+    source = int(source) if source.isdigit() else source
+    cap = cv2.VideoCapture(source)
+
+    fourcc_cap = cv2.VideoWriter_fourcc(*'MJPG')
+    cap.set(cv2.CAP_PROP_FOURCC, fourcc_cap)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, cfg.w)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cfg.h)
+    return cap
 
 class img_obj(object):
     def __init__(self, offset=50):
@@ -144,4 +143,27 @@ class img_obj(object):
         return image[x1:x2, y1:y2, :]
 
 
+
+def update_trackers(trackers, bboxes):
+    track_boxes = [tracker.bbox for tracker in trackers]
+    matched, unmatched_trackers, unmatched_detections = tracker_match(track_boxes, [b[0] for b in bboxes])
+
+    for idx, jdx in matched:
+        trackers[idx].set_bbox(bboxes[jdx][0])
+        trackers[idx].update_pose(bboxes[jdx][1])
+
+    for idx in unmatched_detections:
+        try:
+            trackers[idx].count += 1
+            if trackers[idx].count > trackers[idx].expiration:
+                trackers.pop(idx)
+        except:
+            pass
+
+    for idx in unmatched_trackers:
+        p = person.PersonTracker()
+        p.set_bbox(bboxes[idx][0])
+        p.update_pose(bboxes[idx][1])
+        trackers.append(p)
+    return trackers
 

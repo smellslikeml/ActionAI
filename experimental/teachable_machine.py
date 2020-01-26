@@ -40,13 +40,13 @@ while True:
     if ret:
 
         image, pose_list = poses.inference(frame)
-        print(pose_list)
         for body in pose_list:
             bbox = utils.get_bbox(list(body.values()))
             bboxes.append((bbox, body))
 
         trackers = utils.update_trackers(trackers, bboxes)
 
+        print(pose_list)
         print([(tracker.id, np.vstack(tracker.q)) for tracker in trackers])
 
         for tracker in trackers:
@@ -57,10 +57,10 @@ while True:
                 sample = np.array(list(tracker.q)[:cfg.window])
                 sample = sample.reshape(1, cfg.pose_vec_dim, cfg.window)
                 if activity:
-                    #activity_y = mdl.to_categorical(list(map(cfg.idx_dict.get, tracker.activity)), len(cfg.activity_dict))
-                    activity_y = np.expand_dims(mdl.to_categorical(cfg.idx_dict[activity[0]], len(cfg.activity_dict)), axis=0)
-                    secondary_model.fit(sample, activity_y, batch_size=1, epochs=1, verbose=1)
-                    tracker.activity = activity
+                    for act in activity:
+                        a_vec = np.expand_dims(mdl.to_categorical(cfg.idx_dict[act], len(cfg.activity_dict)), axis=0)
+                        secondary_model.fit(sample, a_vec, batch_size=1, epochs=1, verbose=1)
+                        tracker.activity = activity
                 else:
                     pred_activity = cfg.activity_idx[np.argmax(secondary_model.predict(sample)[0])]
                     tracker.activity = pred_activity

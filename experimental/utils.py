@@ -104,7 +104,7 @@ def source_capture(source):
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cfg.h)
     return cap
 
-class img_proc(object):
+class img_obj(object):
     def __init__(self, offset=50):
         self.offset = 50
         self.thickness = 3
@@ -114,6 +114,14 @@ class img_proc(object):
 
 
     def annotate(self, tracker, image):
+        '''
+        Used to return image with
+        person instances designated 
+        by the bounding box and a 
+        marker at the centroid.
+        Annotated with tracker id
+        and activity label
+        '''
         x1, y1, x2, y2 = tracker.bbox
         image = cv2.rectangle(image, (x1 - self.offset, y1 - self.offset), 
                                      (x2 + self.offset, y2 + self.offset), 
@@ -127,6 +135,13 @@ class img_proc(object):
             pass
         image = cv2.drawMarker(image, tracker.centroid, self.centroid_color, 0, 30, self.thickness) 
         return image
+
+    def get_crop(self, bbox, image):
+        '''
+        Helper for sampling image crops
+        '''
+        return image[x1:x2, y1:y2, :]
+
 
 
 def update_trackers(trackers, bboxes):

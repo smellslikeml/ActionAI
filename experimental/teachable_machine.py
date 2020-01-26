@@ -30,7 +30,7 @@ if cfg.video:
 
 trackers = []
 cap = utils.source_capture(sys.argv[1])
-img = utils.img_proc()
+img = utils.img_obj()
 
 
 while True:

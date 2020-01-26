@@ -30,7 +30,7 @@ if cfg.video:
 
 trackers = []
 cap = utils.source_capture(sys.argv[1])
-img = utils.img_proc()
+img = utils.img_obj()
 
 
 while True:
@@ -44,7 +44,6 @@ while True:
         for body in pose_list:
             bbox = utils.get_bbox(list(body.values()))
             bboxes.append((bbox, body))
-
 
         trackers = utils.update_trackers(trackers, bboxes)
 

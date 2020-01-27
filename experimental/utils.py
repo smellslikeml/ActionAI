@@ -131,9 +131,9 @@ class img_obj(object):
                                      (x2 + self.offset, y2 + self.offset), 
                                      self.box_color, 2) 
         try:
-            cv2.putText(image, tracker.id, (x1 - self.offset + 10, y1 + 40), \
+            cv2.putText(image, tracker.id, (x1 - self.offset, y1 - self.offset), \
                                cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
-            cv2.putText(image, str(tracker.activity), (x1 - self.offset + 10, y1 - self.offest - 10), \
+            cv2.putText(image, str(tracker.activity), (x1 - self.offset, y1 - self.offest), \
                                cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
         except:
             pass

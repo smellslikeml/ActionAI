@@ -76,11 +76,13 @@ while True:
                 newFileWriter.writerow([tracker.activity] + list(np.hstack(list(tracker.q)[:cfg.window])))
 
         if cfg.annotate:
+            if cfg.faces:
+                # TODO: decouple from annotation, 
+                # add face feature to person class
+                image = detector.process_frame(image)
             for tracker in trackers:
                 if len(tracker.q) >= cfg.window:
                     image = img.annotate(tracker, image)
-            if cfg.faces:
-                image = detector.process_frame(image)
 
         if cfg.video:
             out.write(image)

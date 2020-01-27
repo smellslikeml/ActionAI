@@ -7,7 +7,7 @@ MDL_DIR = ROOT_DIR + '/models/'
 mdl_path = os.path.join(MDL_DIR, 'haarcascade_frontalface_alt.xml')
 
 class FaceDetector():
-    def __init__(self, nbs=5, scale=1.1, inset=150, min_size=30, model_file=mdl_path):
+    def __init__(self, nbs=5, scale=1.1, inset=150, min_size=10, model_file=mdl_path):
         self.detector = cv2.CascadeClassifier(mdl_path)
         self.nbs = nbs
         self.scale = scale

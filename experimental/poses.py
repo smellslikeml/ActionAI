@@ -29,9 +29,7 @@ class DrawObjects(object):
 
     def __init__(self, topology):
         self.topology = topology
-        self.body_labels = {0:'nose', 1: 'lEye', 2: 'rEye', 3:'lEar', 4:'rEar', 5:'lShoulder', 6:'rShoulder', 
-               7:'lElbow', 8:'rElbow', 9:'lWrist', 10:'rWrist', 11:'lHip', 12:'rHip', 13:'lKnee', 14:'rKnee',
-              15:'lAnkle', 16:'rAnkle', 17:'neck'}
+        self.body_labels = cfg.body_dict 
 
     def __call__(self, image, object_counts, obj, normalized_peaks, color):
         topology = self.topology

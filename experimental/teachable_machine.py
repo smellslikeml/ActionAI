@@ -74,10 +74,12 @@ while True:
             if cfg.log:
                 newFileWriter.writerow([tracker.activity] + list(np.hstack(list(tracker.q)[:cfg.window])))
 
-        if cfg.video:
+        if cfg.annotate:
             for tracker in trackers:
                 if len(tracker.q) >= cfg.window:
                     image = img.annotate(tracker, image)
+
+        if cfg.video:
             out.write(image)
 
         if cfg.display:

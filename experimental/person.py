@@ -1,5 +1,6 @@
 import cv2
 import utils
+import random
 import config as cfg
 import numpy as np
 from collections import deque
@@ -13,7 +14,7 @@ class PersonTracker(object):
         self.id = utils.id_gen()
         self.q = deque(maxlen=10)
         self.cubit_q = deque(maxlen=50)
-        self.skeleton_color = skeleton_color
+        self.skeleton_color = tuple([random.randint(0, 255) for _ in range(3)]) #skeleton_color
         return
         
     def set_bbox(self, bbox):

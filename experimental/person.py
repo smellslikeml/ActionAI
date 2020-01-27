@@ -35,6 +35,7 @@ class PersonTracker(object):
         Used to encode pose estimates
         over a time window
         '''
+        self.pose_dict = pose_dict
         ft_vec = np.zeros(cfg.pose_vec_dim)
         for ky in pose_dict:
             idx = cfg.body_idx[ky]

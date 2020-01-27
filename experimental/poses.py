@@ -26,6 +26,7 @@ with open(ASSET_DIR + 'human_pose.json', 'r') as f:
     human_pose = json.load(f)
 
 class DrawObjects(object):
+    # TODO: cut out opencv, move to annotate
 
     def __init__(self, topology):
         self.topology = topology
@@ -82,7 +83,7 @@ def inference(image):
     cmap, paf = model_trt(data)
     cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
     counts, objects, peaks = parse_objects(cmap, paf) #, cmap_threshold=0.15, link_threshold=0.15)
-    color = (112,107,222)
+    color = (112,107,222)  # make dictionary from obj id to cmap
     body_list = []
     for obj in objects[0]:
         body_list.append(draw_objects(image, counts, obj, peaks, color))

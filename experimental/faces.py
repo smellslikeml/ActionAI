@@ -19,7 +19,6 @@ class FaceDetector():
         self.objs = self.detector.detectMultiScale(gray, scaleFactor=self.scale, minNeighbors=self.nbs, minSize=self.min_size)
         return
 
-
     def process_frame(self, img):
         self.run_inference(img)
         img_copy = img.copy()

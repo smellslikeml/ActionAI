@@ -63,8 +63,11 @@ while True:
                         secondary_model.fit(sample, a_vec, batch_size=1, epochs=1, verbose=1)
                         tracker.activity = activity
                 else:
-                    pred_activity = cfg.activity_idx[np.argmax(secondary_model.predict(sample)[0])]
-                    tracker.activity = pred_activity
+                    try:
+                        pred_activity = cfg.activity_idx[np.argmax(secondary_model.predict(sample)[0])]
+                        tracker.activity = pred_activity
+                    except KeyError:
+                        print('error')
 
                 print(tracker.activity)
 

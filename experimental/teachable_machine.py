@@ -41,12 +41,13 @@ while True:
 
         image, pose_list = poses.inference(frame)
         for body in pose_list:
-            bbox = utils.get_bbox(list(body.values()))
-            bboxes.append((bbox, body))
+            if body:
+                bbox = utils.get_bbox(list(body.values()))
+                bboxes.append((bbox, body))
 
         trackers = utils.update_trackers(trackers, bboxes)
 
-        print(pose_list)
+        #print(pose_list)
         print([(tracker.id, np.vstack(tracker.q)) for tracker in trackers])
 
         for tracker in trackers:

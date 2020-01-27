@@ -1,6 +1,6 @@
-w = 2448
-h = 2048
-fps = 30
+w = 2048
+h = 1536
+fps = 15
 window = 3
 input_size = (224, 224)
 log = True

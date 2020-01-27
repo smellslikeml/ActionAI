@@ -9,7 +9,7 @@ import trt_pose.models
 from torch2trt import TRTModule
 import torchvision.transforms as transforms
 from trt_pose.parse_objects import ParseObjects
-from trt_pose.draw_objects import DrawObjects
+#from trt_pose.draw_objects import DrawObjects
 
 
 ASSET_DIR = os.environ['HOME'] + '/trt_pose/tasks/human_pose/'
@@ -24,6 +24,46 @@ device = torch.device('cuda')
 
 with open(ASSET_DIR + 'human_pose.json', 'r') as f:
     human_pose = json.load(f)
+
+class DrawObjects(object):
+
+    def __init__(self, topology):
+        self.topology = topology
+        self.body_labels = {0:'nose', 1: 'lEye', 2: 'rEye', 3:'lEar', 4:'rEar', 5:'lShoulder', 6:'rShoulder', 
+               7:'lElbow', 8:'rElbow', 9:'lWrist', 10:'rWrist', 11:'lHip', 12:'rHip', 13:'lKnee', 14:'rKnee',
+              15:'lAnkle', 16:'rAnkle', 17:'neck'}
+
+    def __call__(self, image, object_counts, obj, normalized_peaks, color):
+        topology = self.topology
+        height = image.shape[0]
+        width = image.shape[1]
+
+        K = topology.shape[0]
+        count = int(object_counts[0])
+        body_dict = {}
+        C = obj.shape[0]
+        for j in range(C):
+            k = int(obj[j])
+            if k >= 0:
+                peak = normalized_peaks[0][j][k]
+                x = round(float(peak[1]) * width)
+                y = round(float(peak[0]) * height)
+                cv2.circle(image, (x, y), 3, color, 2)
+                body_dict[self.body_labels[j]] = (x,y)
+
+        for k in range(K):
+            c_a = topology[k][2]
+            c_b = topology[k][3]
+            if obj[c_a] >= 0 and obj[c_b] >= 0:
+                peak0 = normalized_peaks[0][c_a][obj[c_a]]
+                peak1 = normalized_peaks[0][c_b][obj[c_b]]
+                x0 = round(float(peak0[1]) * width)
+                y0 = round(float(peak0[0]) * height)
+                x1 = round(float(peak1[1]) * width)
+                y1 = round(float(peak1[0]) * height)
+                cv2.line(image, (x0, y0), (x1, y1), color, 2)
+
+        return body_dict
 
 topology = trt_pose.coco.coco_category_to_topology(human_pose)
 parse_objects = ParseObjects(topology)
@@ -44,7 +84,9 @@ def inference(image):
     cmap, paf = model_trt(data)
     cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
     counts, objects, peaks = parse_objects(cmap, paf) #, cmap_threshold=0.15, link_threshold=0.15)
-    body_dict = draw_objects(image, counts, objects, peaks)
-    return image, body_dict
-
+    color = (112,107,222)
+    body_list = []
+    for obj in objects[0]:
+        body_list.append(draw_objects(image, counts, obj, peaks, color))
+    return image, body_list
 

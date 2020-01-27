@@ -110,8 +110,8 @@ def source_capture(source):
 class img_obj(object):
     def __init__(self, offset=50):
         self.offset = 50
-        self.fontScale = 2
-        self.thickness = 3
+        self.fontScale = 1
+        self.thickness = 2
         self.box_color = (195, 195, 89)
         self.text_color = (151, 187, 106)
         self.centroid_color = (223, 183, 190)

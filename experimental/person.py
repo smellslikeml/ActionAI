@@ -5,14 +5,15 @@ import numpy as np
 from collections import deque
 
 class PersonTracker(object):
-    def __init__(self, expiration=5):
+    def __init__(self, expiration=5, skeleton_color=(255, 0, 255)):
         self.count = 0
         self.eps = 1e-6
-        self.activity = ''
+        self.activity = []
         self.expiration = expiration
         self.id = utils.id_gen()
         self.q = deque(maxlen=10)
         self.cubit_q = deque(maxlen=50)
+        self.skeleton_color = skeleton_color
         return
         
     def set_bbox(self, bbox):

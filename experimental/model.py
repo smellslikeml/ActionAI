@@ -8,8 +8,8 @@ from tensorflow.keras.utils import to_categorical
 
 def lstm_model():
     model = Sequential()
-    model.add(LSTM(32, dropout=0.2, recurrent_dropout=0.2, input_shape=(cfg.pose_vec_dim, cfg.window)))
-    model.add(Dense(32, activation='relu'))
+    model.add(LSTM(16, dropout=0.2, recurrent_dropout=0.2, input_shape=(cfg.pose_vec_dim, cfg.window)))
+    model.add(Dense(16, activation='relu'))
     model.add(Dropout(0.2))
     model.add(Dense(len(cfg.activity_dict), activation='softmax'))
     print(model.summary())

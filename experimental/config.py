@@ -1,11 +1,15 @@
-w = 2048
-h = 1536
-fps = 15
+import os
+import json
+
+w = 1024
+h = 768
+fps = 30
 window = 3
 input_size = (224, 224)
-log = True
-video = True
-display = False 
+log = False
+video = False
+display = True 
+secondary = False
 learning_rate = 1e-4
 
 body_dict = {0:'nose', 1: 'lEye', 2: 'rEye', 3:'lEar', 4:'rEar', 5:'lShoulder', 6:'rShoulder', 
@@ -32,3 +36,8 @@ activity_dict = {'left': '',
 activity_list = sorted([x for x in activity_dict.values() if x])
 idx_dict = {x:idx for idx, x in enumerate(activity_list)}
 activity_idx = {idx : activity for idx, activity in enumerate(activity_list)}
+
+ASSET_DIR = os.environ['HOME'] + '/trt_pose/tasks/human_pose/'
+
+with open(ASSET_DIR + 'human_pose.json', 'r') as f:
+    human_pose = json.load(f)

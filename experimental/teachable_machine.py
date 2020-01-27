@@ -13,10 +13,11 @@ import control as ps3
 
 timestamp = int(time.time() * 1000)
 
-secondary_model = mdl.lstm_model()
-secondary_model.compile(loss='categorical_crossentropy', 
-                        optimizer=mdl.RMSprop(lr=cfg.learning_rate), 
-                        metrics=['accuracy'])
+if cfg.secondary:
+    secondary_model = mdl.lstm_model()
+    secondary_model.compile(loss='categorical_crossentropy', 
+                            optimizer=mdl.RMSprop(lr=cfg.learning_rate), 
+                            metrics=['accuracy'])
 
 if cfg.log:
     dataFile = open('data/logs/{}.csv'.format(timestamp), 'w')
@@ -52,20 +53,19 @@ while True:
 
         for tracker in trackers:
             activity = [cfg.activity_dict[x] for x in ps3.getButton()]
-            print(activity)
-            print('-------------------------')
-            if len(tracker.q) >= cfg.window:
+            print('------')
+            if len(tracker.q) >= cfg.window and cfg.secondary:
                 sample = np.array(list(tracker.q)[:cfg.window])
                 sample = sample.reshape(1, cfg.pose_vec_dim, cfg.window)
                 if activity:
                     for act in activity:
                         a_vec = np.expand_dims(mdl.to_categorical(cfg.idx_dict[act], len(cfg.activity_dict)), axis=0)
                         secondary_model.fit(sample, a_vec, batch_size=1, epochs=1, verbose=1)
-                        tracker.activity = activity
+                    tracker.activity = activity
                 else:
                     try:
                         pred_activity = cfg.activity_idx[np.argmax(secondary_model.predict(sample)[0])]
-                        tracker.activity = pred_activity
+                        tracker.activity = list(pred_activity)
                     except KeyError:
                         print('error')
 

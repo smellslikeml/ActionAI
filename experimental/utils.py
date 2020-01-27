@@ -2,11 +2,14 @@ import cv2
 import string
 import random
 import numpy as np
+import trt_pose.coco
 from operator import itemgetter
 from sklearn.utils.linear_assignment_ import linear_assignment
 
 import person
 import config as cfg
+
+topology = trt_pose.coco.coco_category_to_topology(cfg.human_pose)
 
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
     '''
@@ -129,10 +132,19 @@ class img_obj(object):
         try:
             cv2.putText(image, tracker.id, (x1 - self.offset + 10, y1 + 40), \
                                cv2.FONT_HERSHEY_SIMPLEX, 3, self.text_color, self.thickness) 
-            cv2.putText(image, tracker.activity, (x1 - self.offset + 10, y1 - self.offest - 10), \
+            cv2.putText(image, str(tracker.activity), (x1 - self.offset + 10, y1 - self.offest - 10), \
                                cv2.FONT_HERSHEY_SIMPLEX, 3, self.text_color, self.thickness) 
         except:
             pass
+
+        for row in topology:
+            try:
+                a_idx, b_idx = row[2:]
+                a_part, b_part = cfg.body_dict[int(a_idx.data.cpu().numpy())], cfg.body_dict[int(b_idx.data.cpu().numpy())]
+                a_coord, b_coord = tracker.pose_dict[a_part], tracker.pose_dict[b_part]
+                cv2.line(image, a_coord, b_coord, tracker.skeleton_color, 2)
+            except KeyError:
+                pass
         image = cv2.drawMarker(image, tracker.centroid, self.centroid_color, 0, 30, self.thickness) 
         return image
 
@@ -166,4 +178,3 @@ def update_trackers(trackers, bboxes):
         p.set_pose(bboxes[idx][1])
         trackers.append(p)
     return trackers
-

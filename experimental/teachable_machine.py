@@ -19,6 +19,10 @@ if cfg.secondary:
                             optimizer=mdl.RMSprop(lr=cfg.learning_rate), 
                             metrics=['accuracy'])
 
+if cfg.faces:
+    from faces import FaceDetector
+    detector = FaceDetector()
+
 if cfg.log:
     dataFile = open('data/logs/{}.csv'.format(timestamp), 'w')
     newFileWriter = csv.writer(dataFile)
@@ -47,13 +51,10 @@ while True:
                 bboxes.append((bbox, body))
 
         trackers = utils.update_trackers(trackers, bboxes)
-
-        #print(pose_list)
-        print([(tracker.id, np.vstack(tracker.q)) for tracker in trackers])
+        #print([(tracker.id, np.vstack(tracker.q)) for tracker in trackers])
 
         for tracker in trackers:
             activity = [cfg.activity_dict[x] for x in ps3.getButton()]
-            print('------')
             if len(tracker.q) >= cfg.window and cfg.secondary:
                 sample = np.array(list(tracker.q)[:cfg.window])
                 sample = sample.reshape(1, cfg.pose_vec_dim, cfg.window)
@@ -78,6 +79,8 @@ while True:
             for tracker in trackers:
                 if len(tracker.q) >= cfg.window:
                     image = img.annotate(tracker, image)
+            if cfg.faces:
+                image = detector.process_frame(image)
 
         if cfg.video:
             out.write(image)

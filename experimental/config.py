@@ -9,6 +9,7 @@ input_size = (224, 224)
 secondary = False
 log = False
 video = False
+faces = True
 display = True 
 annotate = True
 learning_rate = 1e-4

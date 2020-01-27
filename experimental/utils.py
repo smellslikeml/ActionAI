@@ -110,6 +110,7 @@ def source_capture(source):
 class img_obj(object):
     def __init__(self, offset=50):
         self.offset = 50
+        self.fontScale = 2
         self.thickness = 3
         self.box_color = (195, 195, 89)
         self.text_color = (151, 187, 106)
@@ -131,9 +132,9 @@ class img_obj(object):
                                      self.box_color, 2) 
         try:
             cv2.putText(image, tracker.id, (x1 - self.offset + 10, y1 + 40), \
-                               cv2.FONT_HERSHEY_SIMPLEX, 3, self.text_color, self.thickness) 
+                               cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
             cv2.putText(image, str(tracker.activity), (x1 - self.offset + 10, y1 - self.offest - 10), \
-                               cv2.FONT_HERSHEY_SIMPLEX, 3, self.text_color, self.thickness) 
+                               cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
         except:
             pass
 

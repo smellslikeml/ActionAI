@@ -126,10 +126,12 @@ class img_obj(object):
         '''
         for row in cfg.topology:
             try:
-                a_idx, b_idx = row[2:]
-                a_part, b_part = cfg.body_dict[int(a_idx.data.cpu().numpy())], cfg.body_dict[int(b_idx.data.cpu().numpy())]
+                a_idx, b_idx = list(map(lambda x: int(x.data.cpu().numpy()), row[2:]))
+                a_part, b_part = cfg.body_dict[a_idx], cfg.body_dict[b_idx]
                 a_coord, b_coord = tracker.pose_dict[a_part], tracker.pose_dict[b_part]
-                cv2.line(image, a_coord, b_coord, tracker.skeleton_color, 2)
+                part_key = '_'.join(list(map(str, [a_idx, b_idx])))
+                part_color = tracker.skeleton_dict[part_key]
+                cv2.line(image, a_coord, b_coord, part_color, 2)
             except KeyError:
                 pass
 

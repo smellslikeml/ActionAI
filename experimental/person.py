@@ -21,7 +21,9 @@ class PersonTracker(object):
         self.id = utils.id_gen()
         self.q = deque(maxlen=10)
         self.cubit_q = deque(maxlen=50)
-        self.skeleton_color = tuple([random.randint(0, 255) for _ in range(3)]) #skeleton_color
+        skeleton_color = tuple([random.randint(0, 255) for _ in range(3)]) #skeleton_color
+        skeleton_noise = np.array([[random.randint(-50, 50) for _ in range(3)] for _ in range(len(cfg.topology))])
+        self.skeleton_dict = {'_'.join(list(map(lambda x: str(x.data.cpu().numpy()), row[2:]))) : tuple([int(np.clip(v, 0, 255)) for v in np.array(skeleton_color) + skeleton_noise[idx]]) for idx, row in enumerate(cfg.topology)}
 
         self.faces = []
         self.detector = cv2.CascadeClassifier(model_file)

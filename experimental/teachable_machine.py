@@ -30,14 +30,19 @@ if cfg.log:
 
 if cfg.video:
     # Define the codec and create VideoWriter object
-    name = 'data/videos/{}.mp4'.format(timestamp)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(name, fourcc, cfg.fps, (cfg.w, cfg.h))
+    name = 'data/videos/{}.mp4'.format(timestamp)
+    if cfg.file_format == 'aligned':
+        cfg.video = True
+        out = cv2.VideoWriter(name, fourcc, cfg.fps, cfg.aligned_shape)
+        f = cv2.VideoWriter_fourcc(*'mp4v')
+        out_orig = cv2.VideoWriter(name.replace('.', '_orig.'), f, cfg.fps, cfg.aligned_shape)
+    else:
+        out = cv2.VideoWriter(name, fourcc, cfg.fps, (cfg.w, cfg.h))
 
 trackers = []
 cap = utils.source_capture(sys.argv[1])
 img = utils.img_obj()
-
 
 while True:
 
@@ -90,12 +95,23 @@ while True:
             ann_trackers = [(tracker, np.prod((tracker.w, tracker.h))) for tracker in ann_trackers]
             ann_trackers = [tup[0] for tup in sorted(ann_trackers, key=itemgetter(1), reverse=True)][:cfg.max_persons]
             if not cfg.overlay:
+                if cfg.file_format == 'aligned':
+                    im = image.copy()
                 image = np.zeros_like(image).astype('uint8')
             for tracker in ann_trackers:
                 image = img.annotate(tracker, image, boxes=cfg.boxes)
 
+
         if cfg.video:
+            if cfg.file_format == 'aligned':
+                image = cv2.resize(image, (512, 512))
+                try:
+                    im = cv2.resize(im, (512, 512))
+                except:
+                    im = np.zeros_like(image)
+                out_orig.write(im)
             out.write(image)
+
 
         if cfg.display:
             cv2.imshow(sys.argv[1], image)

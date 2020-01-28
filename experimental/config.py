@@ -16,6 +16,8 @@ learning_rate = 1e-4
 max_persons = 2
 overlay = False
 boxes = False
+file_format = 'aligned' # aligned versus ?
+aligned_shape = (512, 512)
 
 body_dict = {0:'nose', 1: 'lEye', 2: 'rEye', 3:'lEar', 4:'rEar', 5:'lShoulder', 6:'rShoulder', 
                7:'lElbow', 8:'rElbow', 9:'lWrist', 10:'rWrist', 11:'lHip', 12:'rHip', 13:'lKnee', 14:'rKnee',

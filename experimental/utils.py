@@ -117,7 +117,7 @@ class img_obj(object):
         self.centroid_color = (223, 183, 190)
 
 
-    def annotate(self, tracker, image):
+    def annotate(self, tracker, image, boxes):
         '''
         Used to return image with
         person instances designated 
@@ -126,18 +126,6 @@ class img_obj(object):
         Annotated with tracker id
         and activity label
         '''
-        x1, y1, x2, y2 = tracker.bbox
-        image = cv2.rectangle(image, (x1 - self.offset, y1 - self.offset), 
-                                     (x2 + self.offset, y2 + self.offset), 
-                                     self.box_color, 2) 
-        try:
-            cv2.putText(image, tracker.id, (x1 - self.offset, y1 - self.offset), \
-                               cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
-            cv2.putText(image, str(tracker.activity), (x1 - self.offset, y1 - self.offest), \
-                               cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
-        except:
-            pass
-
         for row in topology:
             try:
                 a_idx, b_idx = row[2:]
@@ -146,7 +134,21 @@ class img_obj(object):
                 cv2.line(image, a_coord, b_coord, tracker.skeleton_color, 2)
             except KeyError:
                 pass
-        image = cv2.drawMarker(image, tracker.centroid, self.centroid_color, 0, 30, self.thickness) 
+
+        if boxes:
+            try:
+                x1, y1, x2, y2 = tracker.bbox
+                image = cv2.rectangle(image, (x1 - self.offset, y1 - self.offset), 
+                                             (x2 + self.offset, y2 + self.offset), 
+                                             self.box_color, 2) 
+                image = cv2.drawMarker(image, tracker.centroid, self.centroid_color, 0, 30, self.thickness) 
+                cv2.putText(image, tracker.id, (x1 - self.offset, y1 - self.offset), \
+                                   cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
+                cv2.putText(image, str(tracker.activity), (x1 - self.offset, y1 - self.offest), \
+                                   cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
+            except:
+                pass
+
         return image
 
     def get_crop(self, bbox, image):

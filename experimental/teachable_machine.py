@@ -89,8 +89,10 @@ while True:
 
             ann_trackers = [(tracker, np.prod((tracker.w, tracker.h))) for tracker in ann_trackers]
             ann_trackers = [tup[0] for tup in sorted(ann_trackers, key=itemgetter(1), reverse=True)][:cfg.max_persons]
+            if not cfg.overlay:
+                image = np.zeros_like(image).astype('uint8')
             for tracker in ann_trackers:
-                image = img.annotate(tracker, image)
+                image = img.annotate(tracker, image, boxes=cfg.boxes)
 
         if cfg.video:
             out.write(image)

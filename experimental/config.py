@@ -1,16 +1,16 @@
 import os
 import json
 
-w = 1280 #1024
-h = 720 #768
-fps = 25 #30
+w = 1024
+h = 768
+fps = 30
 window = 3
 input_size = (224, 224)
 secondary = False
 log = False
-video = True #False
-faces = False #True
-display = False #True 
+video = False
+faces = True
+display = True 
 annotate = True
 learning_rate = 1e-4
 

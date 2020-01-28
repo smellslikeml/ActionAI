@@ -12,7 +12,7 @@ face_mdl = os.path.join(MDL_DIR, 'haarcascade_frontalface_alt.xml')
 
 
 class PersonTracker(object):
-    def __init__(self, expiration=5, skeleton_color, nbs=5, scale=1.1, inset=150, min_size=10, model_file=face_mdl):
+    def __init__(self, skeleton_color, expiration=5, nbs=5, scale=1.1, inset=150, min_size=10, model_file=face_mdl):
         self.count = 0
         self.eps = 1e-6
         self.activity = []

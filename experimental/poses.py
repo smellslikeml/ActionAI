@@ -9,7 +9,6 @@ import trt_pose.models
 from torch2trt import TRTModule
 import torchvision.transforms as transforms
 from trt_pose.parse_objects import ParseObjects
-from trt_pose.draw_objects import DrawObjects
 
 
 ASSET_DIR = os.environ['HOME'] + '/trt_pose/tasks/human_pose/'
@@ -25,9 +24,31 @@ device = torch.device('cuda')
 with open(ASSET_DIR + 'human_pose.json', 'r') as f:
     human_pose = json.load(f)
 
+class ListHumans(object):
+    def __init__(self, body_labels=cfg.body_dict):
+        self.body_labels = body_labels
+
+    def __call__(self, objects, normalized_peaks):
+
+        pose_list = []
+        for obj in objects[0]:
+            pose_dict = {}
+            C = obj.shape[0]
+            for j in range(C):
+                k = int(obj[j])
+                if k >= 0:
+                    peak = normalized_peaks[0][j][k]
+                    x = round(float(peak[1]) * cfg.w)
+                    y = round(float(peak[0]) * cfg.h)
+                    #cv2.circle(image, (x, y), 3, color, 2)
+                    pose_dict[self.body_labels[j]] = (x,y)
+            pose_list.append(pose_dict)
+
+        return pose_list
+
 topology = trt_pose.coco.coco_category_to_topology(human_pose)
 parse_objects = ParseObjects(topology)
-draw_objects = DrawObjects(topology)
+humans = ListHumans()
 
 def preprocess(image):
     global device
@@ -44,7 +65,7 @@ def inference(image):
     cmap, paf = model_trt(data)
     cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
     counts, objects, peaks = parse_objects(cmap, paf) #, cmap_threshold=0.15, link_threshold=0.15)
-    body_dict = draw_objects(image, counts, objects, peaks)
-    return image, body_dict
-
+    #color = (112,107,222)  # make dictionary from obj id to cmap
+    pose_list = humans(objects, peaks)
+    return image, pose_list
 

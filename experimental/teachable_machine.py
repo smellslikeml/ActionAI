@@ -88,8 +88,8 @@ while True:
                     ann_trackers.append(tracker)
 
             ann_trackers = [(tracker, np.prod((tracker.w, tracker.h))) for tracker in ann_trackers]
-            ann_trackers = [tup[0] for tup in sorted(ann_trackers, key=itemgetter(1), reverse=True)]
-            for tracker in ann_trackers[:cfg.max_persons]:
+            ann_trackers = [tup[0] for tup in sorted(ann_trackers, key=itemgetter(1), reverse=True)][:cfg.max_persons]
+            for tracker in ann_trackers:
                 image = img.annotate(tracker, image)
 
         if cfg.video:

@@ -37,6 +37,7 @@ if cfg.video:
         out = cv2.VideoWriter(name, fourcc, cfg.fps, cfg.aligned_shape)
         f = cv2.VideoWriter_fourcc(*'mp4v')
         out_orig = cv2.VideoWriter(name.replace('.', '_orig.'), f, cfg.fps, cfg.aligned_shape)
+        # ffmpeg -i input.mp4 -i input_orig.mp4 -filter_complex hstack=inputs=2 output.mp4
     else:
         out = cv2.VideoWriter(name, fourcc, cfg.fps, (cfg.w, cfg.h))
 

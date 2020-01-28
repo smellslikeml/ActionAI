@@ -2,14 +2,12 @@ import cv2
 import string
 import random
 import numpy as np
-import trt_pose.coco
 from operator import itemgetter
 from sklearn.utils.linear_assignment_ import linear_assignment
 
 import person
 import config as cfg
 
-topology = trt_pose.coco.coco_category_to_topology(cfg.human_pose)
 
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
     '''
@@ -126,7 +124,7 @@ class img_obj(object):
         Annotated with tracker id
         and activity label
         '''
-        for row in topology:
+        for row in cfg.topology:
             try:
                 a_idx, b_idx = row[2:]
                 a_part, b_part = cfg.body_dict[int(a_idx.data.cpu().numpy())], cfg.body_dict[int(b_idx.data.cpu().numpy())]

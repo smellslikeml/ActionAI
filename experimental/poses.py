@@ -46,8 +46,7 @@ class ListHumans(object):
 
         return pose_list
 
-topology = trt_pose.coco.coco_category_to_topology(human_pose)
-parse_objects = ParseObjects(topology)
+parse_objects = ParseObjects(cfg.topology)
 humans = ListHumans()
 
 def preprocess(image):

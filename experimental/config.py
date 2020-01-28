@@ -1,6 +1,14 @@
 import os
 import json
 
+import trt_pose.coco
+ASSET_DIR = os.environ['HOME'] + '/trt_pose/tasks/human_pose/'
+
+with open(ASSET_DIR + 'human_pose.json', 'r') as f:
+    human_pose = json.load(f)
+
+topology = trt_pose.coco.coco_category_to_topology(human_pose)
+
 w = 1280 #1024
 h = 720 #768
 fps = 25 #30
@@ -44,7 +52,3 @@ activity_list = sorted([x for x in activity_dict.values() if x])
 idx_dict = {x:idx for idx, x in enumerate(activity_list)}
 activity_idx = {idx : activity for idx, activity in enumerate(activity_list)}
 
-ASSET_DIR = os.environ['HOME'] + '/trt_pose/tasks/human_pose/'
-
-with open(ASSET_DIR + 'human_pose.json', 'r') as f:
-    human_pose = json.load(f)

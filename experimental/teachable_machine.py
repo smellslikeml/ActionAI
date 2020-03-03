@@ -95,19 +95,25 @@ while True:
 
             ann_trackers = [(tracker, np.prod((tracker.w, tracker.h))) for tracker in ann_trackers]
             ann_trackers = [tup[0] for tup in sorted(ann_trackers, key=itemgetter(1), reverse=True)][:cfg.max_persons]
+
+            ann_trackers = sorted([(tracker, tracker.centroid[0]) for tracker in ann_trackers], key=itemgetter(1))
+            ann_trackers = [tup[0] for tup in ann_trackers]
             if not cfg.overlay:
                 if cfg.file_format == 'aligned':
                     im = image.copy()
                 image = np.zeros_like(image).astype('uint8')
-            for tracker in ann_trackers:
+            for idx, tracker in enumerate(ann_trackers):
+                tracker.skeleton_dict = cfg.cmap_list[idx]
                 image = img.annotate(tracker, image, boxes=cfg.boxes)
 
 
         if cfg.video:
             if cfg.file_format == 'aligned':
-                image = cv2.resize(image, (512, 512))
+                #image = cv2.resize(image, (512, 512))
+                image = cv2.resize(image, (1280, 720))
                 try:
-                    im = cv2.resize(im, (512, 512))
+                    #im = cv2.resize(im, (512, 512))
+                    im = cv2.resize(im, (1280, 720))
                 except:
                     im = np.zeros_like(image)
                 out_orig.write(im)

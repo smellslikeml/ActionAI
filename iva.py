@@ -20,7 +20,6 @@ import trt_pose.models
 from torch2trt import TRTModule
 import torchvision.transforms as transforms
 from trt_pose.parse_objects import ParseObjects
-from trt_pose.draw_objects import DrawObjects
 
 model_w = 224
 model_h = 224
@@ -43,9 +42,6 @@ mean = torch.Tensor([0.485, 0.456, 0.406]).cuda()
 std = torch.Tensor([0.229, 0.224, 0.225]).cuda()
 device = torch.device('cuda')
 
-topology = trt_pose.coco.coco_category_to_topology(human_pose)
-parse_objects = ParseObjects(topology)
-draw_objects = DrawObjects(topology)
 
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
     '''
@@ -181,7 +177,51 @@ class PersonTracker(object):
         image = cv2.drawMarker(image, self.centroid, (255, 0, 0), 0, 30, 4)
         return image
 
+class DrawObjects(object):
 
+    def __init__(self, topology, body_labels):
+        self.topology = topology
+        self.body_labels = body_labels
+
+    def __call__(self, image, object_counts, objects, normalized_peaks):
+        topology = self.topology
+        height = image.shape[0]
+        width = image.shape[1]
+
+        K = topology.shape[0]
+        count = int(object_counts[0])
+        K = topology.shape[0]
+        body_list = []
+        for i in range(count):
+            body_dict = {}
+            color = (112,107,222)
+            obj = objects[0][i]
+            C = obj.shape[0]
+            for j in range(C):
+                k = int(obj[j])
+                if k >= 0:
+                    peak = normalized_peaks[0][j][k]
+                    x = round(float(peak[1]) * width)
+                    y = round(float(peak[0]) * height)
+                    cv2.circle(image, (x, y), 3, color, 2)
+                    body_dict[self.body_labels[j]] = (x,y)
+            body_list.append(body_dict)
+            for k in range(K):
+                c_a = topology[k][2]
+                c_b = topology[k][3]
+                if obj[c_a] >= 0 and obj[c_b] >= 0:
+                    peak0 = normalized_peaks[0][c_a][obj[c_a]]
+                    peak1 = normalized_peaks[0][c_b][obj[c_b]]
+                    x0 = round(float(peak0[1]) * width)
+                    y0 = round(float(peak0[0]) * height)
+                    x1 = round(float(peak1[1]) * width)
+                    y1 = round(float(peak1[0]) * height)
+                    cv2.line(image, (x0, y0), (x1, y1), color, 2)
+        return body_list
+
+topology = trt_pose.coco.coco_category_to_topology(human_pose)
+parse_objects = ParseObjects(topology)
+draw_objects = DrawObjects(topology, body_labels)
 
 source = sys.argv[1]
 source = int(source) if source.isdigit() else source
@@ -213,11 +253,10 @@ if WRITE2VIDEO:
 
 if RUNSECONDARY:
     import tensorflow as tf
-    secondary_model = tf.keras.models.load_model('models/lstm_69.h5')
+    secondary_model = tf.keras.models.load_model('models/lstm_spin_squat.h5')
     window = 3
     pose_vec_dim = 36
     motion_dict = {0: 'spin', 1: 'squat'}
-
 
 trackers = []
 while True:

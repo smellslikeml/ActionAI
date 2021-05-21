@@ -1,4 +1,4 @@
-tensorflow==2.1.2
+tensorflow==2.5.0
 scipy
 scikit-learn
 opencv-contrib-python

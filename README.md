@@ -1,6 +1,6 @@
 # ActionAI 🤸
 
-[![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Join the chat at https://gitter.im/action-ai/community](https://badges.gitter.im/action-ai/community.svg)](https://gitter.im/action-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ![stars](https://img.shields.io/github/stars/smellslikeml/ActionAI)
 ![forks](https://img.shields.io/github/forks/smellslikeml/ActionAI)
 ![license](https://img.shields.io/github/license/smellslikeml/ActionAI)

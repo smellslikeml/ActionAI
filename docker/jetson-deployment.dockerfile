@@ -147,4 +147,4 @@ RUN cd / && git clone -b legacy_py3.6 https://github.com/QUVA-Lab/e2cnn.git
 RUN cd /e2cnn/ && python3 setup.py install
 
 # Install Tensorflow
-RUN pip3 install --pre --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v46 tensorflow>=2
+RUN pip3 install --pre --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v46 'tensorflow>=2'

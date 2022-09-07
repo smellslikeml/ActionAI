@@ -38,6 +38,16 @@ All preprocessing, training, and deployment configuration variables are stored i
 
 The ```conf.py``` file included imports a LinearRegression model as our classifier by default.
 
+#### Docker support
+We currently added a Dockerfile for deploying on a Jetson device running Jetpack 4.6.1 found in the `docker/` directory. To build, you can run:
+```bash
+docker build -f jetson-deployment.dockerfile -t actionai:j4.6.1 .
+```
+You can also pull a prebuilt image hosted on [Docker Hub](https://hub.docker.com/repository/docker/smellslikeml/actionai/general).
+```bash
+docker pull smellslikeml/actionai:j4.6.1
+```
+
 ### Example
 After proprocessing your image data using the ```preprocess.py``` script, you can create a model by calling the ```actionModel()```function, which creates a scikit-learn pipeline. Then, call the ```trainModel()``` function with your data to train:
 

@@ -1,12 +1,12 @@
 import os
 import json
 
-w = 1280  # 1024
-h = 720  # 768
-fps = 25  # 30
+w = 640
+h = 480
+fps = 25
 window = 3
 input_size = (224, 224)
-secondary = False
+secondary = True
 log = False
 video = True
 faces = False

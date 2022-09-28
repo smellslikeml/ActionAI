@@ -65,7 +65,7 @@ while True:
                 if activity:
                     for act in activity:
                         a_vec = np.expand_dims(
-                            mdl.to_categorical(idx_dict[act], len(cfg.activity_dict)),
+                            mdl.to_categorical(cfg.idx_dict[act], len(cfg.activity_dict)),
                             axis=0,
                         )
                         secondary_model.fit(

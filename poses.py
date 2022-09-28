@@ -3,15 +3,18 @@ import PIL
 import cv2
 import json
 import torch
-import config as cfg
 import trt_pose.coco
 import trt_pose.models
+from utils import body_labels
 from torch2trt import TRTModule
 import torchvision.transforms as transforms
 from trt_pose.parse_objects import ParseObjects
 
 
-ASSET_DIR = os.environ["HOME"] + "/trt_pose/tasks/human_pose/"
+w = 640
+h = 480
+input_size = (224, 224)
+ASSET_DIR = os.environ["HOME"] + "/ActionAI/models/"
 OPTIMIZED_MODEL = ASSET_DIR + "resnet18_baseline_att_224x224_A_epoch_249_trt.pth"
 
 model_trt = TRTModule()
@@ -26,7 +29,7 @@ with open(ASSET_DIR + "human_pose.json", "r") as f:
 
 
 class ListHumans(object):
-    def __init__(self, body_labels=cfg.body_dict):
+    def __init__(self, body_labels=body_labels):
         self.body_labels = body_labels
 
     def __call__(self, objects, normalized_peaks):
@@ -39,8 +42,8 @@ class ListHumans(object):
                 k = int(obj[j])
                 if k >= 0:
                     peak = normalized_peaks[0][j][k]
-                    x = round(float(peak[1]) * cfg.w)
-                    y = round(float(peak[0]) * cfg.h)
+                    x = round(float(peak[1]) * w)
+                    y = round(float(peak[0]) * h)
                     # cv2.circle(image, (x, y), 3, color, 2)
                     pose_dict[self.body_labels[j]] = (x, y)
             pose_list.append(pose_dict)
@@ -50,13 +53,13 @@ class ListHumans(object):
 
 topology = trt_pose.coco.coco_category_to_topology(human_pose)
 parse_objects = ParseObjects(topology)
-humans = ListHumans()
+humans = ListHumans(body_labels)
 
 
 def preprocess(image):
     global device
     device = torch.device("cuda")
-    image = cv2.resize(image, cfg.input_size)
+    image = cv2.resize(image, input_size)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = PIL.Image.fromarray(image)
     image = transforms.functional.to_tensor(image).to(device)

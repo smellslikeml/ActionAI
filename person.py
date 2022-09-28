@@ -2,15 +2,36 @@ import os
 import cv2
 import utils
 import random
-import config as cfg
 import numpy as np
 from collections import deque
 
 # From Github: https://github.com/opencv/opencv/tree/master/data/haarcascades
-ROOT_DIR = os.environ["HOME"] + "/ActionAI/experimental"
+ROOT_DIR = os.environ["HOME"] + "/ActionAI/"
 MDL_DIR = ROOT_DIR + "/models/"
 face_mdl = os.path.join(MDL_DIR, "haarcascade_frontalface_alt.xml")
 
+body_dict = {
+    0: "nose",
+    1: "lEye",
+    2: "rEye",
+    3: "lEar",
+    4: "rEar",
+    5: "lShoulder",
+    6: "rShoulder",
+    7: "lElbow",
+    8: "rElbow",
+    9: "lWrist",
+    10: "rWrist",
+    11: "lHip",
+    12: "rHip",
+    13: "lKnee",
+    14: "rKnee",
+    15: "lAnkle",
+    16: "rAnkle",
+    17: "neck",
+}
+body_idx = dict([[v, k] for k, v in body_dict.items()])
+pose_vec_dim = 2 * len(body_dict)
 
 class PersonTracker(object):
     def __init__(
@@ -62,9 +83,9 @@ class PersonTracker(object):
         over a time window
         """
         self.pose_dict = pose_dict
-        ft_vec = np.zeros(cfg.pose_vec_dim)
+        ft_vec = np.zeros(pose_vec_dim)
         for ky in pose_dict:
-            idx = cfg.body_idx[ky]
+            idx = body_idx[ky]
             ft_vec[2 * idx : 2 * (idx + 1)] = (
                 2
                 * (np.array(pose_dict[ky]) - np.array(self.centroid))
@@ -72,27 +93,6 @@ class PersonTracker(object):
             )
         self.q.append(ft_vec)
         return
-
-    def set_cubit(self, pose_dict):
-        """
-        Used to estimate the cubit
-        for the purposes of calculating
-        distance, in a queue for averaging
-        """
-        for side in ["r", "l"]:
-            try:
-                p1, p2 = list(
-                    map(
-                        np.array,
-                        [
-                            pose_dict["{}Elbow".format(side)],
-                            pose_dict["{}Wrist".format(side)],
-                        ],
-                    )
-                )
-                self.cubit_q.append(np.linalg.norm(p1 - p2))
-            except:
-                pass
 
     def get_face(self, image):
         x1, y1, x2, y2 = self.bbox

@@ -1,3 +1,4 @@
+import os
 import cv2
 import json
 import torch
@@ -10,6 +11,54 @@ import torchvision.transforms as transforms
 from trt_pose.parse_objects import ParseObjects
 
 import annotate
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+
+from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.utils import to_categorical
+
+w = 640
+h = 480
+fps = 25
+window = 3
+input_size = (224, 224)
+secondary = True
+log = False
+video = True
+faces = False
+display = False
+learning_rate = 1e-4
+max_persons = 2
+overlay = False
+boxes = False
+
+
+activity_dict = {
+    "left": "",
+    "right": "",
+    "up": "",
+    "down": "",
+    "d1L": "",
+    "d1R": "",
+    "select": "",
+    "start": "",
+    "cross": "extension",
+    "circle": "curl",
+    "triangle": "raise",
+    "square": "press",
+    "jLbutton": "",
+    "jRbutton": "",
+}
+
+activity_list = sorted([x for x in activity_dict.values() if x])
+idx_dict = {x: idx for idx, x in enumerate(activity_list)}
+activity_idx = {idx: activity for idx, activity in enumerate(activity_list)}
+
+ASSET_DIR = os.environ["HOME"] + "/trt_pose/tasks/human_pose/"
+
+with open(ASSET_DIR + "human_pose.json", "r") as f:
+    human_pose = json.load(f)
 
 model_w = 224
 model_h = 224
@@ -38,6 +87,7 @@ body_labels = {
     17: "neck",
 }
 body_idx = dict([[v, k] for k, v in body_labels.items()])
+pose_vec_dim = 2 * len(body_labels)
 
 with open(ASSET_DIR + "human_pose.json", "r") as f:
     human_pose = json.load(f)
@@ -74,13 +124,7 @@ def inference(image):
     )  # , cmap_threshold=0.15, link_threshold=0.15)
     body_dict = draw_objects(image, counts, objects, peaks)
     return image, body_dict
-import config as cfg
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
 
-from tensorflow.keras.optimizers import RMSprop
-from tensorflow.keras.utils import to_categorical
 
 def lstm_model():
     model = Sequential()
@@ -89,11 +133,11 @@ def lstm_model():
             16,
             dropout=0.2,
             recurrent_dropout=0.2,
-            input_shape=(cfg.pose_vec_dim, cfg.window),
+            input_shape=(pose_vec_dim, window),
         )
     )
     model.add(Dense(16, activation="relu"))
     model.add(Dropout(0.2))
-    model.add(Dense(len(cfg.activity_dict), activation="softmax"))
+    model.add(Dense(len(activity_dict), activation="softmax"))
     print(model.summary())
     return model

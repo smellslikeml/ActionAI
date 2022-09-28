@@ -9,7 +9,8 @@ from scipy.optimize import linear_sum_assignment
 
 from model import *
 from utils import *
-import experimental.config as cfg
+import config as cfg
+from experimental.utils import *
 
 
 def tracker_distance(prev_roi, curr_roi, metric=IOU):

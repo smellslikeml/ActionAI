@@ -11,13 +11,15 @@ import config as cfg
 
 topology = trt_pose.coco.coco_category_to_topology(cfg.human_pose)
 
+
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
-    '''
+    """
     https://pythontips.com/2013/07/28/generating-a-random-string/
     input: id_gen(3, "6793YUIO")
     output: 'Y3U'
-    '''
-    return ''.join(random.choice(chars) for x in range(size))
+    """
+    return "".join(random.choice(chars) for x in range(size))
+
 
 def IOU(boxA, boxB):
     # pyimagesearch: determine the (x, y)-coordinates of the intersection rectangle
@@ -51,17 +53,18 @@ def get_bbox(kp_list):
             bbox.append(bound)
     return bbox
 
-def tracker_match(trackers, detections, iou_thrd = 0.3):
-    '''
+
+def tracker_match(trackers, detections, iou_thrd=0.3):
+    """
     From current list of trackers and new detections, output matched detections,
     unmatched trackers, unmatched detections.
     https://towardsdatascience.com/computer-vision-for-tracking-8220759eee85
-    '''
+    """
 
-    IOU_mat= np.zeros((len(trackers),len(detections)),dtype=np.float32)
-    for t,trk in enumerate(trackers):
-        for d,det in enumerate(detections):
-            IOU_mat[t,d] = IOU(trk,det)
+    IOU_mat = np.zeros((len(trackers), len(detections)), dtype=np.float32)
+    for t, trk in enumerate(trackers):
+        for d, det in enumerate(detections):
+            IOU_mat[t, d] = IOU(trk, det)
 
     # Produces matches
     # Solve the maximizing the sum of IOU assignment problem using the
@@ -69,12 +72,12 @@ def tracker_match(trackers, detections, iou_thrd = 0.3):
     matched_idx = linear_assignment(-IOU_mat)
 
     unmatched_trackers, unmatched_detections = [], []
-    for t,trk in enumerate(trackers):
-        if(t not in matched_idx[:,0]):
+    for t, trk in enumerate(trackers):
+        if t not in matched_idx[:, 0]:
             unmatched_trackers.append(t)
 
     for d, det in enumerate(detections):
-        if(d not in matched_idx[:,1]):
+        if d not in matched_idx[:, 1]:
             unmatched_detections.append(d)
 
     matches = []
@@ -84,28 +87,30 @@ def tracker_match(trackers, detections, iou_thrd = 0.3):
     # an untracked object
 
     for m in matched_idx:
-        if(IOU_mat[m[0], m[1]] < iou_thrd):
+        if IOU_mat[m[0], m[1]] < iou_thrd:
             unmatched_trackers.append(m[0])
             unmatched_detections.append(m[1])
         else:
-            matches.append(m.reshape(1,2))
+            matches.append(m.reshape(1, 2))
 
-    if(len(matches)==0):
-        matches = np.empty((0,2),dtype=int)
+    if len(matches) == 0:
+        matches = np.empty((0, 2), dtype=int)
     else:
-        matches = np.concatenate(matches,axis=0)
+        matches = np.concatenate(matches, axis=0)
 
     return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
+
 
 def source_capture(source):
     source = int(source) if source.isdigit() else source
     cap = cv2.VideoCapture(source)
 
-    fourcc_cap = cv2.VideoWriter_fourcc(*'MJPG')
+    fourcc_cap = cv2.VideoWriter_fourcc(*"MJPG")
     cap.set(cv2.CAP_PROP_FOURCC, fourcc_cap)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, cfg.w)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cfg.h)
     return cap
+
 
 class img_obj(object):
     def __init__(self, offset=50):
@@ -116,20 +121,22 @@ class img_obj(object):
         self.text_color = (151, 187, 106)
         self.centroid_color = (223, 183, 190)
 
-
     def annotate(self, tracker, image, boxes):
-        '''
+        """
         Used to return image with
         person instances designated 
         by the bounding box and a 
         marker at the centroid.
         Annotated with tracker id
         and activity label
-        '''
+        """
         for row in topology:
             try:
                 a_idx, b_idx = row[2:]
-                a_part, b_part = cfg.body_dict[int(a_idx.data.cpu().numpy())], cfg.body_dict[int(b_idx.data.cpu().numpy())]
+                a_part, b_part = (
+                    cfg.body_dict[int(a_idx.data.cpu().numpy())],
+                    cfg.body_dict[int(b_idx.data.cpu().numpy())],
+                )
                 a_coord, b_coord = tracker.pose_dict[a_part], tracker.pose_dict[b_part]
                 cv2.line(image, a_coord, b_coord, tracker.skeleton_color, 2)
             except KeyError:
@@ -138,30 +145,51 @@ class img_obj(object):
         if boxes:
             try:
                 x1, y1, x2, y2 = tracker.bbox
-                image = cv2.rectangle(image, (x1 - self.offset, y1 - self.offset), 
-                                             (x2 + self.offset, y2 + self.offset), 
-                                             self.box_color, 2) 
-                image = cv2.drawMarker(image, tracker.centroid, self.centroid_color, 0, 30, self.thickness) 
-                cv2.putText(image, tracker.id, (x1 - self.offset, y1 - self.offset), \
-                                   cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
-                cv2.putText(image, str(tracker.activity), (x1 - self.offset, y1 - self.offest), \
-                                   cv2.FONT_HERSHEY_SIMPLEX, self.fontScale, self.text_color, self.thickness) 
+                image = cv2.rectangle(
+                    image,
+                    (x1 - self.offset, y1 - self.offset),
+                    (x2 + self.offset, y2 + self.offset),
+                    self.box_color,
+                    2,
+                )
+                image = cv2.drawMarker(
+                    image, tracker.centroid, self.centroid_color, 0, 30, self.thickness
+                )
+                cv2.putText(
+                    image,
+                    tracker.id,
+                    (x1 - self.offset, y1 - self.offset),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    self.fontScale,
+                    self.text_color,
+                    self.thickness,
+                )
+                cv2.putText(
+                    image,
+                    str(tracker.activity),
+                    (x1 - self.offset, y1 - self.offest),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    self.fontScale,
+                    self.text_color,
+                    self.thickness,
+                )
             except:
                 pass
 
         return image
 
     def get_crop(self, bbox, image):
-        '''
+        """
         Helper for sampling image crops
-        '''
+        """
         return image[x1:x2, y1:y2, :]
-
 
 
 def update_trackers(trackers, bboxes):
     track_boxes = [tracker.bbox for tracker in trackers]
-    matched, unmatched_trackers, unmatched_detections = tracker_match(track_boxes, [b[0] for b in bboxes])
+    matched, unmatched_trackers, unmatched_detections = tracker_match(
+        track_boxes, [b[0] for b in bboxes]
+    )
 
     for idx, jdx in matched:
         trackers[idx].set_bbox(bboxes[jdx][0])

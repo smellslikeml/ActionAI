@@ -75,17 +75,17 @@ If specified, this script will write a labeled video as ```out.mp4```. This demo
   <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/teachable.gif">
 </p>
 
-We've also included a script under the experimental folder, ```teachable_machine.py```, that supports labelling samples via a PS3 Controller on a Jetson Nano and training in real-time from a webcam stream. This will require these extra dependencies:
+We've also included a script under the experimental folder, ```online_finetune.py```, that supports labelling samples via a PS3 Controller on a Jetson Nano and training in real-time from a webcam stream. This will require these extra dependencies:
 * [Pygame](https://www.pygame.org/docs/ref/joystick.html)
 * [PS3 Controller](https://docs.donkeycar.com/parts/controllers/#ps3-controller)
 
 To test it, run:
 ``` bash
 # Using a webcam
-$ python experimental/teachable_machine.py /dev/video0  
+$ python experimental/online_finetune.py /dev/video0  
 
 # Using a video asset
-$ python experimental/teachable_machine.py /path/to/file.mp4  
+$ python experimental/online_finetune.py /path/to/file.mp4  
 ```
 This script will also write labelled data into a csv file stored in ```data/``` directory and produce a video asset ```out.mp4```. 
 

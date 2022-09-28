@@ -7,25 +7,10 @@ import numpy as np
 
 from model import *
 from utils import *
+import config as cfg
 
 import os
 import json
-
-w = 640
-h = 480
-fps = 25
-window = 3
-input_size = (224, 224)
-secondary = True
-log = False
-video = True
-faces = False
-display = False
-annotate = True
-learning_rate = 1e-4
-max_persons = 2
-overlay = False
-boxes = False
 
 if __name__ == "__main__":
     source = sys.argv[1]
@@ -40,23 +25,21 @@ if __name__ == "__main__":
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, w)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
 
-    if log:
+    if cfg.log:
         activity = os.path.basename(source)
         dataFile = open("data/{}.csv".format(activity), "w")
         newFileWriter = csv.writer(dataFile)
 
-    if video:
+    if cfg.video:
         # Define the codec and create VideoWriter object
         name = "out.mp4"
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        out = cv2.VideoWriter(name, fourcc, 30.0, (w, h))
+        out = cv2.VideoWriter(name, fourcc, 30.0, (cfg.w, cfg.h))
 
-    if secondary:
+    if cfg.secondary:
         import tensorflow as tf
 
         secondary_model = tf.keras.models.load_model("models/lstm_spin_squat.h5")
-        window = 3
-        pose_vec_dim = 36
         motion_dict = {0: "spin", 1: "squat"}
 
     trackers = []
@@ -92,11 +75,11 @@ if __name__ == "__main__":
                 person.update_pose(bboxes[idx][1])
                 trackers.append(person)
 
-            if secondary:
+            if cfg.secondary:
                 for tracker in trackers:
                     if len(tracker.q) >= 3:
                         sample = np.array(list(tracker.q)[:3])
-                        sample = sample.reshape(1, pose_vec_dim, window)
+                        sample = sample.reshape(1, cfg.pose_vec_dim, cfg.window)
                         pred_activity = motion_dict[
                             np.argmax(secondary_model.predict(sample)[0])
                         ]
@@ -104,14 +87,14 @@ if __name__ == "__main__":
                         image = tracker.annotate(image)
                         print(pred_activity)
 
-            if log:
+            if cfg.log:
                 for tracker in trackers:
                     if len(tracker.q) >= 3:
                         newFileWriter.writerow(
                             [activity] + list(np.hstack(list(tracker.q)[:3]))
                         )
 
-            if video:
+            if cfg.video:
                 out.write(image)
 
             if cv2.waitKey(1) & 0xFF == ord("q"):

@@ -66,7 +66,7 @@ body_labels = {
     17: "neck",
 }
 
-with open(ASSET_DIR + "human_pose.json", "r") as f:
+with open("models/human_pose.json", "r") as f:
     human_pose = json.load(f)
 
 model_trt = TRTModule()

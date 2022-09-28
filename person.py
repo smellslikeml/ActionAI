@@ -6,9 +6,8 @@ import numpy as np
 from collections import deque
 import config as cfg
 
-ROOT_DIR = os.environ["HOME"] + "/ActionAI/models/"
-face_mdl = os.path.join(ROOT_DIR, "haarcascade_frontalface_alt.xml")
-
+MODEL_DIR = os.environ["HOME"] + "/ActionAI/models/"
+face_mdl = os.path.join(MODEL_DIR, "haarcascade_frontalface_alt.xml")
 
 class PersonTracker(object):
     def __init__(
@@ -62,7 +61,7 @@ class PersonTracker(object):
         self.pose_dict = pose_dict
         ft_vec = np.zeros(cfg.pose_vec_dim)
         for ky in pose_dict:
-            idx = body_idx[ky]
+            idx = cfg.body_idx[ky]
             ft_vec[2 * idx : 2 * (idx + 1)] = (
                 2
                 * (np.array(pose_dict[ky]) - np.array(self.centroid))

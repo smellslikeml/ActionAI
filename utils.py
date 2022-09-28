@@ -2,36 +2,12 @@ import cv2
 import string
 import random
 import numpy as np
+import config as cfg
 from collections import deque
 from operator import itemgetter
 from scipy.optimize import linear_sum_assignment
 
 import person
-
-w = 640
-h = 480
-
-body_labels = {
-    0: "nose",
-    1: "lEye",
-    2: "rEye",
-    3: "lEar",
-    4: "rEar",
-    5: "lShoulder",
-    6: "rShoulder",
-    7: "lElbow",
-    8: "rElbow",
-    9: "lWrist",
-    10: "rWrist",
-    11: "lHip",
-    12: "rHip",
-    13: "lKnee",
-    14: "rKnee",
-    15: "lAnkle",
-    16: "rAnkle",
-    17: "neck",
-}
-body_idx = dict([[v, k] for k, v in body_labels.items()])
 
 
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
@@ -97,8 +73,8 @@ class img_obj(object):
             try:
                 a_idx, b_idx = row[2:]
                 a_part, b_part = (
-                    body_labels[int(a_idx.data.cpu().numpy())],
-                    body_labels[int(b_idx.data.cpu().numpy())],
+                    cfg.body_labels[int(a_idx.data.cpu().numpy())],
+                    cfg.body_labels[int(b_idx.data.cpu().numpy())],
                 )
                 a_coord, b_coord = tracker.pose_dict[a_part], tracker.pose_dict[b_part]
                 cv2.line(image, a_coord, b_coord, tracker.skeleton_color, 2)
@@ -178,8 +154,8 @@ def source_capture(source):
     cap = cv2.VideoCapture(source)
     fourcc_cap = cv2.VideoWriter_fourcc(*"MJPG")
     cap.set(cv2.CAP_PROP_FOURCC, fourcc_cap)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, w)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, cfg.w)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cfg.h)
     return cap
 
 def tracker_distance(prev_roi, curr_roi, metric=IOU):
@@ -219,43 +195,3 @@ def tracker_match(prev_roi, curr_roi, threshold=0.3):
 
     return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
 
-class PersonTracker(object):
-    def __init__(self):
-        self.id = id_gen()
-        self.q = deque(maxlen=10)
-        return
-
-    def set_bbox(self, bbox):
-        self.bbox = bbox
-        x1, y1, x2, y2 = bbox
-        self.h = 1e-6 + x2 - x1
-        self.w = 1e-6 + y2 - y1
-        self.centroid = tuple(map(int, (x1 + self.h / 2, y1 + self.w / 2)))
-        return
-
-    def update_pose(self, pose_dict):
-        ft_vec = np.zeros(2 * len(body_labels))
-        for ky in pose_dict:
-            idx = body_idx[ky]
-            ft_vec[2 * idx : 2 * (idx + 1)] = (
-                2
-                * (np.array(pose_dict[ky]) - np.array(self.centroid))
-                / np.array((self.h, self.w))
-            )
-        self.q.append(ft_vec)
-        return
-
-    def annotate(self, image):
-        x1, y1, x2, y2 = self.bbox
-        image = cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 3)
-        image = cv2.putText(
-            image,
-            self.activity,
-            (x1, y1 - 10),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.9,
-            (0, 0, 255),
-            2,
-        )
-        image = cv2.drawMarker(image, self.centroid, (255, 0, 0), 0, 30, 4)
-        return image

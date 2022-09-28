@@ -1,8 +1,8 @@
-from utils import body_labels
+import config as cfg
 
 
 class ListHumans(object):
-    def __init__(self, body_labels=body_labels):
+    def __init__(self, body_labels=cfg.body_dict):
         self.body_labels = body_labels
 
     def __call__(self, objects, normalized_peaks):

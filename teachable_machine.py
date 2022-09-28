@@ -7,11 +7,11 @@ import time
 import numpy as np
 from operator import itemgetter
 
-import poses
 import utils
 import person
 import model as mdl
 import control as ps3
+import config as cfg
 
 timestamp = int(time.time() * 1000)
 
@@ -48,7 +48,7 @@ while True:
     bboxes = []
     if ret:
 
-        image, pose_list = poses.inference(frame)
+        image, pose_list = mdl.inference(frame)
         for body in pose_list:
             if body:
                 bbox = utils.get_bbox(list(body.values()))

@@ -8,6 +8,7 @@ import numpy as np
 from model import *
 from utils import *
 import config as cfg
+from person import PersonTracker
 
 import os
 import json
@@ -61,7 +62,7 @@ if __name__ == "__main__":
 
             for idx, jdx in matched:
                 trackers[idx].set_bbox(bboxes[jdx][0])
-                trackers[idx].update_pose(bboxes[jdx][1])
+                trackers[idx].set_pose(bboxes[jdx][1])
 
             for idx in unmatched_detections:
                 try:
@@ -72,7 +73,7 @@ if __name__ == "__main__":
             for idx in unmatched_trackers:
                 person = PersonTracker()
                 person.set_bbox(bboxes[idx][0])
-                person.update_pose(bboxes[idx][1])
+                person.set_pose(bboxes[idx][1])
                 trackers.append(person)
 
             if cfg.secondary:
@@ -84,7 +85,7 @@ if __name__ == "__main__":
                             np.argmax(secondary_model.predict(sample)[0])
                         ]
                         tracker.activity = pred_activity
-                        image = tracker.annotate(image)
+                        #image = tracker.annotate(image)
                         print(pred_activity)
 
             if cfg.log:

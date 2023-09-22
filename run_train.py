@@ -11,7 +11,7 @@ from tensorflow.keras.layers import LSTM, Dense
 from sklearn.model_selection import train_test_split
 
 # Step 1: Extract keypoints using GStreamer and save to JSON
-data_dir = '/home/funk/Downloads/actionai_demo/'
+data_dir = '/path/to/actionai_demo/'
 
 labels = os.listdir(data_dir)
 label_mapping = {label: idx for idx, label in enumerate(labels)}

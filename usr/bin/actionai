@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Path to the configuration file
+CONFIG_PATH="/etc/actionai/config"
+
+if [[ "$1" == "configure" ]]; then
+    # Configure the application
+    echo "Please enter the mounting directory for your files:"
+    read MOUNTING_DIR
+
+    # Save the configuration
+    echo "MOUNTING_DIR=$MOUNTING_DIR" | sudo tee $CONFIG_PATH
+else
+    # Load the configuration file
+    if [[ -f $CONFIG_PATH ]]; then
+        source $CONFIG_PATH
+    else
+        echo "Error: Configuration file not found. Run 'actionai configure' to create it."
+        exit 1
+    fi
+
+    # Check if the necessary environment variable is set
+    if [[ -z "$MOUNTING_DIR" ]]; then
+        echo "Error: MOUNTING_DIR must be set. Run 'actionai configure' to set it."
+        exit 1
+    fi
+
+    # Run the Docker command
+
+    /usr/bin/docker run -it --rm --privileged -u 0 --net=host -v ~/.Xauthority:/home/dlstreamer/.Xauthority -v /tmp/.X11-unix -e DISPLAY=$DISPLAY -v ${MOUNTING_DIR}:${MOUNTING_DIR} smellslikeml/actionai:cli "@"
+fi

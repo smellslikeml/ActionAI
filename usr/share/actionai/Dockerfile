@@ -18,8 +18,13 @@ WORKDIR /opt/intel/dlstreamer/samples
 COPY models.lst .
 RUN ./download_models.sh
 
-# Copy and install ActionAI
-COPY . /home/dlstreamer/ActionAI
+# Clone and install ActionAI from the cli branch
+RUN git clone -b actionai-cli https://github.com/smellslikeml/ActionAI.git /home/dlstreamer/ActionAI
 RUN pip install /home/dlstreamer/ActionAI
 
 WORKDIR /home/dlstreamer
+COPY entrypoint.sh /entrypoint.sh
+# Make the entrypoint script executable
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

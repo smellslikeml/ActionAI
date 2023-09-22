@@ -69,7 +69,9 @@ def train(data_dir, model_dir, window_size, learning_rate, epochs, batch_size):
     model.fit(X_data, y_data, epochs=epochs, batch_size=batch_size)
 
     # Save your model
-    model.save(os.path.join(model_dir, 'model.h5'))
+    model_save_path = os.path.join(model_dir, 'model.h5')
+    model.save(model_save_path)
     with open(os.path.join(model_dir, 'labels.txt'), mode='wt', encoding='utf-8') as label_file:
         label_file.write('\n'.join(labels))
-    return f"Model saved successfully: {model_dir}/model.h5"
+
+    return f"Model saved successfully: {model_save_path}"

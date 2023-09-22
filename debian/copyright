@@ -1,0 +1,7 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: actionai 
+Source: https://github.com/smellslikeml/ActionAI
+
+Files: *
+Copyright: 2023 Smells Like ML
+License: MIT

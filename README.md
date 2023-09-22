@@ -15,79 +15,50 @@ ActionAI is a python library for training machine learning models to classify hu
 ## Getting Started 
 These instructions will show how to prepare your image data, train a model, and deploy the model to classify human action from image samples. See deployment for notes on how to deploy the project on a live stream.
 
-
 ### Installation
-Docker installation is recommended:
 
-#### Docker
-The included Dockerfile builds for Jetson devices running Jetpack 4.6.1. To build, cd into the `docker/` directory and run:
-```bash
-docker build -f jetson-deployment.dockerfile -t actionai:j4.6.1 .
+Add the smellslikeml PPA and install with the following:
 ```
-You can also pull a prebuilt image hosted on [Docker Hub](https://hub.docker.com/repository/docker/smellslikeml/actionai/general).
-```bash
-docker pull smellslikeml/actionai:j4.6.1
+sudo add-apt-repository ppa:smellslikeml/ppa
+sudo apt update
+
+# Install with:
+sudo apt-get install actionai
 ```
 
+Make sure to configure the working directory with:
 ```
-docker run -itd --rm 
-         --net=host 
-         --privileged 
-         --env=DISPLAY 
-         --runtime=nvidia  # for GPU
-         --env=QT_X11_NO_MITSHM=1   # for visualization
-         -v /tmp/.X11-unix:/tmp/.X11-unix 
-	 --device /dev/input/js0      # for PS3 controller
-	 -v /run/udev/data:/run/udev/data
-         -v /dev/bus/usb:/dev/bus/usb  # for depthai camera
-         --device-cgroup-rule='c *:* rmw' 
-         -v /path/to/ActionAI:/app/ 
-         smellslikeml/actionai:j4.6.1-latest /bin/bash
+actionai configure
 ```
 
+### Using the CLI
 
-### Jetson Nano Installation
-Alternatively, use a virtual environment to avoid any conflicts with your system's global configuration. You can install the required dependencies via pip:
+Organize your training data in subdirectories like the example below. The `actionai` cli will automatically create a dataset from subdirectories of videos where each subdirectory is a category label.
 
-We use the [trt_pose repo](https://github.com/NVIDIA-AI-IOT/trt_pose) to extract pose estimations. Please look to this repo to install the required dependencies. 
-You will also need to download these zipped [model assets](https://drive.google.com/open?id=1SkPn4vzZofCtwReodtAsnwYgVkONR5-G) and unzip the package into the ```models/``` directory. 
-
-```bash
-# Assuming your python path points to python 3.x 
-$ pip install -r requirements.txt
+```
+.
+└── dataset/
+    ├── category_1/
+    │   └── *.mp4
+    ├── category_2/
+    │   └── *.mp4
+    ├── category_3/
+    │   └── *.mp4
+    └── ...
 ```
 
-## Inference 
-We've provided a sample inference script, ```inference.py```, that will read input from a webcam, mp4, or rstp stream, run inference on each frame, and print inference results. 
-
-If you are running on a Jetson Nano, you can try running the ```iva.py``` script, which will perform multi-person tracking and activity recognition like the demo gif above *Getting Started*. Make sure you have followed the Jetson Nano installation instructions above and simply run:
-```bash
-$ python iva.py 0
-
-# or if you have a video file
-
-$ python iva.py /path/to/file.mp4
+Then you can train a model with:
 ```
-If specified, this script will write a labeled video as ```out.mp4```. This demo uses a sample model called ```lstm_spin_squat.h5``` to classify spinning vs. squatting. Change the model and motion dictionary under the ```RUNSECONDARY``` flag to run your own classifier. 
-
-### Teachable Machine
-<p align="center">
-  <img src="https://github.com/smellslikeml/ActionAI/blob/master/assets/teachable.gif">
-</p>
-
-We've also included a script under the experimental folder, ```online_finetune.py```, that supports labelling samples via a PS3 Controller on a Jetson Nano and training in real-time from a webcam stream. This will require these extra dependencies:
-* [Pygame](https://www.pygame.org/docs/ref/joystick.html)
-* [PS3 Controller](https://docs.donkeycar.com/parts/controllers/#ps3-controller)
-
-To test it, run:
-``` bash
-# Using a webcam
-$ python experimental/online_finetune.py /dev/video0  
-
-# Using a video asset
-$ python experimental/online_finetune.py /path/to/file.mp4  
+actionai train --data=/path/to/your/data/dir --model=/path/to/your/model/dir
 ```
-This script will also write labelled data into a csv file stored in ```data/``` directory and produce a video asset ```out.mp4```. 
+
+And then run inference on a video with:
+```
+actionai predict --model=/path/to/your/model/dir --video=/path/to/your/video.mp4
+```
+
+View the default `config.ini` file included in this branch for additional configurations. You can pass your own config file using the `--cfg` flag.
+
 
 ## Contributing
 
